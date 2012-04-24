@@ -6,8 +6,9 @@ class MetaObj
   var $vocab = "";
   var $text = "";
   var $lang = "";
+  var $attrs = "";
 	
-	function __construct($meta_name = null, $vocab = null, $text = null, $lang = null) 
+	function __construct($meta_name = null, $vocab = null, $text = null, $lang = null, $attrs = null) 
 	{
 	  $this->clear();
 	  if ($vocab) { 
@@ -22,6 +23,9 @@ class MetaObj
     if ($lang) {
         $this->lang = $lang;
     }
+    if ($attrs) {
+      $this->set_attrs($attrs);
+    }
 	}
 	
 	function clear()
@@ -30,31 +34,42 @@ class MetaObj
     $this->vocab = "";
     $this->text = "";
     $this->lang = "";
-  }
-  
-  function from_dict($dict_data)
-  {
-    if (in_array("vocab", $dict_data)) {
-      $this->vocab = $dict_data["vocab"];
-    }
-    if (in_array("meta_name", $dict_data)) {
-      $this->meta_name = $dict_data["meta_name"];
-    }
-    if (in_array("text", $dict_data)) {
-      $this->text = $dict_data["text"];
-    }
-    if (in_array("lang", $dict_data)) {
-      $this->lang = $dict_data["lang"];
-    }
+    $this->attrs = array();
   }
 
-  function to_dict() 
+  function set_attrs($attrs)
+  {
+    foreach($attrs as $key => $value) {
+      if ($key == "meta_name") { continue; }
+      if ($key == "vocab") { continue; }
+      if ($key == "text") { continue; }
+      if ($key == "lang") { continue; }
+      $this->attrs[$key] = $value; 
+    }
+  }
+  
+  function has_attrs() {
+    $has_attrs = True;
+    if (empty($this->attrs)) {
+      $has_attrs = False;
+    }
+    return $has_attrs;
+  }
+
+  function get_attrs() {
+    return $this->attrs;
+  }
+  
+  function to_array() 
   {
     $d = array();
     $d["vocab"] = $this->vocab;
     $d["meta_name"] = $this->meta_name;
     $d["text"] = $this->text;
     $d["lang"] = $this->lang;
+    foreach($this->attrs as $key => $value) {
+      $d[$key] = $value;
+    }
     return $d;
   }
 }
@@ -135,51 +150,7 @@ class FileObj
     $this->path = "/" . trim($path, "/");
   }
 
-  
-  function from_dict($dict_data)
-  {
-    if (in_array("path", $dict_data)) {
-      $this->path = $dict_data["path"];
-    }
-    if (in_array("filename", $dict_data)) {
-      $this->filename = $dict_data["filename"];
-    }
-    if (in_array("extension", $dict_data)) {
-      $this->extension = $dict_data["extension"];
-    }
-    if (in_array("media_type", $dict_data)) {
-      $this->media_type = $dict_data["media_type"];
-    }
-    if (in_array("duration", $dict_data)) {
-      $this->duration = $dict_data["duration"];
-    }
-    if (in_array("size", $dict_data)) {
-      $this->size = $dict_data["size"];
-    }
-    if (in_array("container", $dict_data)) {
-      $this->container = $dict_data["container"];
-    }
-    if (in_array("bitrate", $dict_data)) {
-      $this->bitrate = $dict_data["bitrate"];
-    }
-    if (in_array("width", $dict_data)) {
-      $this->width = $dict_data["width"];
-    }
-    if (in_array("height", $dict_data)) {
-      $this->height = $dict_data["height"];
-    }
-    if (in_array("frames", $dict_data)) {
-      $this->frames = $dict_data["frames"];
-    }
-    if (in_array("framerate", $dict_data)) {
-      $this->framerate = $dict_data["framerate"];
-    }
-    if (in_array("samplerate", $dict_data)) {
-      $this->samplerate = $dict_data["samplerate"];
-    }
-  }
-
-  function to_dict() 
+  function to_array() 
   {
     $d = array();
     $d["path"] = $this->path;
@@ -250,6 +221,109 @@ class MetaContent
     $this->update_files = 0;
   }
   
+  /**
+   * Get an array of FileObj objects.
+   *
+   * @return array of FileObj objects
+   */
+  function get_file_objs() {
+    return $this->file_objs;
+  }
+
+  /**
+   * Add a single FileObj.
+   *
+   * @param FileObj $file_obj
+   */
+  function add_file_obj($path = null, $media_type = null, $size = null, $duration = null, 
+                      $container = null, $bitrate = null, $width = null, $height = null, 
+                      $frames = null, $framerate = null, $samplerate = null)
+  {
+    array_push($this->file_objs, new FileObj($path, $media_type, $size, $duration, $container, $bitrate, $width, $height, $frames, $framerate, $samplerate));
+  }
+
+  /**
+   * Add an array of FileObj objects.
+   *
+   * @param array $file_objs Array of FileObj objects
+   */
+  function add_file_objs($file_objs) {
+    array_merge($this->file_objs, $file_objs);
+  }
+    
+  /**
+   * Get an array of MetaObj objects.
+   *
+   * @return array of MetaObj objects
+   */
+  function get_meta_objs() {
+    return $this->meta_objs;
+  }
+
+  /**
+   * Add a single MetaObj.
+   *
+   * @param MetaObj $meta_obj
+   */
+  function add_meta_obj($meta_name = null, $vocab = null, $text = null, $lang = null, $attrs = null) {
+    array_push($this->meta_objs, new MetaObj($meta_name, $vocab, $text, $lang, $attrs));
+  }
+
+  /**
+   * Add an array of MetaObj objects.
+   *
+   * @param array $meta_objs Array of MetaObj objects
+   */
+  function add_meta_objs($meta_objs) {
+    array_merge($this->meta_objs, $meta_objs);
+  }
+
+  /**
+   * Set all meta_objs (replaces existing ones).
+   *
+   * @param array $meta_objs Array of MetaObj objects
+   */
+  function set_meta_objs($meta_objs) {
+    $this->meta_objs = $meta_objs;
+  }
+  
+  
+  /**
+   * Get tags.
+   *
+   * @return array of tag strings
+   */
+  function get_tags() {
+    return $this->tags;
+  }
+
+  /**
+   * Add a single tag.
+   *
+   * @param string $tag
+   */
+  function add_tag($tag) {
+    array_push($this->tags, $tag);
+  }
+
+  /**
+   * Add an array of tags.
+   *
+   * @param array $tags Array of strings
+   */
+  function add_tags($tags) {
+    array_merge($this->tags, $tags);
+  }
+  
+  /**
+   * Set all tags (replaces existing ones).
+   *
+   * @param array $tags Array of strings
+   */
+  function set_tags($tags) {
+    $this->tags = $tags;
+  }
+  
   function set_thumb_used($thumb_used) 
   {
     $this->thumb_used = "/" . trim($thumb_used, "/");
@@ -258,28 +332,54 @@ class MetaContent
   function from_entry($entry)
   {
     $this->clear();
-    $this->id = $entry->entry->id;
-    $this->name = $entry->entry->content->params->name;
-    $this->meta_updated = $entry->entry->content->params->meta_updated;
-    $this->yt_id = $entry->entry->content->params->yt_id;
-    $this->thumb_used = $entry->entry->content->file_params->thumb_used;
-    $this->update_files = $entry->entry->content->file_params->update_files;
-    # set $tags
-    if (property_exists($entry->entry->content->params, "tag")) {
-      foreach ($entry->entry->content->params->tag as $t) {
-        array_push($this->tags, $t);
+    if (property_exists($entry, "entry")) {
+      $this->id = $entry->entry->id;
+      $this->name = $entry->entry->content->params->name;
+      $this->meta_updated = $entry->entry->content->params->meta_updated;
+      $this->yt_id = $entry->entry->content->params->yt_id;
+      $this->thumb_used = $entry->entry->content->file_params->thumb_used;
+      $this->update_files = $entry->entry->content->file_params->update_files;
+      # set tags
+      if (property_exists($entry->entry->content->params, "tag")) {
+        foreach ($entry->entry->content->params->tag as $t) {
+          array_push($this->tags, $t);
+        }
+      }
+      # set meta objs
+      if (property_exists($entry->entry->content->params, "meta")) {
+        foreach ($entry->entry->content->params->meta as $m) {
+          array_push($this->meta_objs, new MetaObj($m->meta_name, $m->vocab, $m->text, $m->lang, get_object_vars($m)));
+        }
+      }
+      # set files
+      foreach ($entry->entry->content->file as $f) {
+        array_push($this->file_objs, new FileObj($f->path, $f->media_type, $f->size, $f->duration, $f->container, $f->bitrate, $f->width, $f->height, $f->frames, $f->framerate, $f->samplerate));
       }
     }
-    # set meta objs
-    if (property_exists($entry->entry->content->params, "meta")) {
-      foreach ($entry->entry->content->params->meta as $m) {
-        array_push($this->meta_objs, new MetaObj($m->meta_name, $m->vocab, $m->text, $m->lang));
+    elseif (property_exists($entry, "id")) {
+      $this->id = $entry->id;
+      $this->name = $entry->content->params->name;
+      $this->meta_updated = $entry->content->params->meta_updated;
+      $this->yt_id = $entry->content->params->yt_id;
+      $this->thumb_used = $entry->content->file_params->thumb_used;
+      $this->update_files = $entry->content->file_params->update_files;
+      # set tags
+      if (property_exists($entry->content->params, "tag")) {
+        foreach ($entry->content->params->tag as $t) {
+          array_push($this->tags, $t);
+        }
+      }
+      # set meta objs
+      if (property_exists($entry->content->params, "meta")) {
+        foreach ($entry->content->params->meta as $m) {
+          array_push($this->meta_objs, new MetaObj($m->meta_name, $m->vocab, $m->text, $m->lang, get_object_vars($m)));
+        }
+      }
+      # set files
+      foreach ($entry->content->file as $f) {
+        array_push($this->file_objs, new FileObj($f->path, $f->media_type, $f->size, $f->duration, $f->container, $f->bitrate, $f->width, $f->height, $f->frames, $f->framerate, $f->samplerate));
       }
     }
-    # set files
-    foreach ($entry->entry->content->file as $f) {
-      array_push($this->file_objs, new FileObj($f->path, $f->media_type, $f->size, $f->duration, $f->container, $f->bitrate, $f->width, $f->height, $f->frames, $f->framerate, $f->samplerate));
-    } 
   }
 
   function to_entry() 
@@ -288,7 +388,7 @@ class MetaContent
     # set file array
     $entry["entry"]["content"]["file"] = array();
     foreach ($this->file_objs as $f) {
-      array_push($entry["entry"]["content"]["file"], $f->to_dict());
+      array_push($entry["entry"]["content"]["file"], $f->to_array());
     }
     # set params dict
     $entry["entry"]["content"]["params"] = array();
@@ -298,7 +398,7 @@ class MetaContent
     if (! empty($this->meta_objs) ) {
       $entry["entry"]["content"]["params"]["meta"] = array();
       foreach ($this->meta_objs as $m) {
-        array_push($entry["entry"]["content"]["params"]["meta"], $m->to_dict());
+        array_push($entry["entry"]["content"]["params"]["meta"], $m->to_array());
       }
     }
     # set file_params dict

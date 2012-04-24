@@ -1,5 +1,20 @@
 <?php
 
+class ClientException extends Exception 
+{
+  public function __construct($message, $code=0) {
+     parent::__construct($message,$code);
+  }   
+}
+
+class RequestException extends Exception 
+{
+  public function __construct($message, $code=500) {
+     parent::__construct($message,$code);
+  }   
+}
+  
+
 class JsonClient
 {
   var $username;
@@ -220,7 +235,7 @@ class JsonClient
 #   echo "\n Response: " . $response;
 
    if ($code >= 300) {
-     throw new Exception($response, $code);
+     throw new RequestException($response, $code);
    }
 
    if ($response) {
@@ -246,7 +261,7 @@ class JsonClient
     # check if tgt_location_local is writable
     $res = fopen($filepath, 'wb+');
     if (! $res) {
-      throw new Exception("Unable to open file location '" . $filepath . "' for writing.");
+      throw new ClientException("Unable to open file location '" . $filepath . "' for writing.");
     }
     fclose($res);
 
@@ -281,7 +296,7 @@ class JsonClient
       fclose($frc);
       // delete file
       unlink($filepath);
-      throw new Exception($response, $code);
+      throw new RequestException($response, $code);
     }
 
     return $filepath;

@@ -43,8 +43,18 @@ class MetaService
     return $this->json_client->POST($uri, $entry);
 	}
 
-	function updateContent($name, $entry)
+	function updateContent($entry)
 	{
+	  $name = "";
+	  if (is_array($entry)) {
+	    $name = $entry["entry"]["content"]["params"]["name"];
+	  }
+	  elseif (is_object($entry)) {
+	    $name = $entry->entry->content->params->name;
+	  }
+	  if (! $name) {
+      throw new Exception("Invalid content entry passed to updateContent(): the params object should contain a name property!");
+	  }
 	  $uri = "/content/" . $this->username . "/" . $name . "/";
     return $this->json_client->POST($uri, $entry);
 	}
@@ -118,6 +128,20 @@ class MetaService
 	  $uri = "/vocab/" . $this->username . "/" . $name . "/";
     return $this->json_client->DELETE($uri);
 	}
+  
+  function vocabExists($name) 
+  {
+    $exists = False;
+    $uri = "/vocab/" . $this->username . "/" . $name . "/";
+    try {
+      $this->json_client->GET($uri);
+      $exists = True;
+    }
+    catch(RequestException $e) {
+      $exists = False;
+    }
+    return $exists;
+  }
   
   # GET Ext
   # -------------
