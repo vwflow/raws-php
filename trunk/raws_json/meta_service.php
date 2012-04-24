@@ -10,11 +10,14 @@ class MetaService
   var $ssl;
   var $json_client;
 	
-	function __construct($username, $password, $server, $ssl = False) 
+	function __construct($username, $password, $server = null, $ssl = False) 
 	{
     $this->username = $username;
     $this->password = $password;
-    $this->server = $server;
+    $this->server = "meta.meta01.rambla.be";
+    if ($server) {
+      $this->server = $server;
+    }
     $this->ssl = $ssl;
     $this->json_client = new JsonClient($username, $password, $server, $ssl);
 	}
@@ -46,10 +49,14 @@ class MetaService
     return $this->json_client->POST($uri, $entry);
 	}
 
-	function deleteContent($name)
+	function deleteContent($name, $delete_files_from_cdn = True)
 	{
 	  $uri = "/content/" . $this->username . "/" . $name . "/";
-    return $this->json_client->DELETE($uri);
+	  $querystr = null;
+	  if ($delete_files_from_cdn) {
+	    $querystr = "sync_cdn=1";
+	  }
+    return $this->json_client->DELETE($uri, $querystr);
 	}
 	
 	# GET Contentdir
