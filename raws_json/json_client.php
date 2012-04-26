@@ -1,5 +1,29 @@
 <?php
+# Copyright (C) 2012 rambla.eu
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
+/**
+ * @file HTTP REST client using JSON as the data format.
+ *
+ * @package	raws-php
+ * @copyright rambla.eu, 2012
+ * @version 0.1 (2012/04/26)
+ */
+ 
+/**
+ * Exception raised by the REST client.
+ */
 class ClientException extends Exception 
 {
   public function __construct($message, $code=0) {
@@ -7,14 +31,19 @@ class ClientException extends Exception
   }   
 }
 
+/**
+ * Exception raised as a result of a HTTP error response.
+ */
 class RequestException extends Exception 
 {
   public function __construct($message, $code=500) {
      parent::__construct($message,$code);
   }   
 }
-  
 
+/**
+ * Client for REST communication with web-services, using json as the data format.
+ */
 class JsonClient
 {
   var $username;
@@ -188,8 +217,10 @@ class JsonClient
    curl_setopt($curl_handle, CURLOPT_URL, $url);
    curl_setopt($curl_handle, CURLOPT_HTTPHEADER, $headers);
    curl_setopt($curl_handle, CURLOPT_RETURNTRANSFER, true);
-   //curl_setopt($curl_handle, CURLOPT_SSL_VERIFYHOST, false);
-   //curl_setopt($curl_handle, CURLOPT_SSL_VERIFYPEER, false);
+   if ($this->ssl) {
+     curl_setopt($curl_handle, CURLOPT_SSL_VERIFYHOST, false);
+     curl_setopt($curl_handle, CURLOPT_SSL_VERIFYPEER, false);
+   }
 
    curl_setopt($curl_handle, CURLOPT_USERPWD, $this->username . ":" . $this->password);
 
