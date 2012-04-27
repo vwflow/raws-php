@@ -50,13 +50,24 @@ class JsonClient
   var $password;
   var $server;
   var $ssl;
+  var $user_agent;
 	
-	function __construct($username, $password, $server, $ssl = False) 
+  /**
+   * Constructor.
+   *
+   * @param string $username Rambla user account name
+   * @param string $password Rambla user account pwd
+   * @param string $server Name of the web-service (eg. 'rass.cdn01.rambla.be').
+   * @param bool $ssl True if you're using SSL (if you want to use SSL for file uploads, make sure you have a 'secure' user account - contact support@rambla.be)
+   * @param string $user_agent Name of the user agent (is passed in the 'User-Agent' HTTP header).
+   */
+	function __construct($username, $password, $server, $ssl = False, $user_agent = "raws-php") 
 	{
     $this->username = $username;
     $this->password = $password;
     $this->server = $server;
     $this->ssl = $ssl;
+    $this->user_agent = $user_agent;
 	}
 
   /**
@@ -84,7 +95,7 @@ class JsonClient
 	  if ($querystr) {
 	    $url = $url . "?" . ltrim($querystr, "?");
 	  }
-#	  echo "\nURL:" . $url;
+
 	  return $url;
 	}
 	
@@ -93,8 +104,8 @@ class JsonClient
    *
    * @param string $uri URI path or full URI.
    * @param string $querystr Query-string to be appended to the URI.
-   * @param decode $decode Set this to False if you don't want the response body to be decoded from json into a stdObject.
-   * @return stdObject corresponding to a json entry or feed, or null (in case of DELETE)
+   * @param decode $decode Set this to False if you don't want the response body to be decoded from json into a stdClass object.
+   * @return stdClass object corresponding to a json entry or feed, or null (in case of DELETE)
    */
 	function GET($uri, $querystr = null, $decode = True)
 	{
@@ -103,7 +114,7 @@ class JsonClient
 	}
 	
   /**
-   * Do a GET request to download a file from RASS.
+   * Do a GET request to download a file from RAWS.
    *
    * @param string $uri URI path or full URI.
    * @param string $filepath Local path to the file that needs to be downloaded.
@@ -122,9 +133,9 @@ class JsonClient
    * Do a POST request with json-encoded data in the body.
    *
    * @param string $uri URI path or full URI.
-   * @param array or stdObject $data If the request body contains data, this should contain a json serializable array or stdObject.
+   * @param array or stdClass $data If the request body contains data, this should contain a json serializable array or stdClass object.
    * @param string $querystr Query-string to be appended to the URI.
-   * @return stdObject corresponding to a json entry
+   * @return stdClass Object corresponding to a json entry
    */
 	function POST($uri, $data, $querystr = null)
 	{
@@ -173,22 +184,22 @@ class JsonClient
   /**
    * Do a HTTP request to RAWS using json as the data format.
    *
-   * This method will encode the request body to json (unless $filepath != null) + decode the response body from json to an stdObject (unless $decode == False).
+   * This method will encode the request body to json (unless $filepath != null) + decode the response body from json to an stdClass object (unless $decode == False).
    *
    * If an HTTP error status is returned by RAWS, this method raises an exception.
    *  The exception will contain the HTTP $code and $msg returned by RAWS.
    *
-   * If the method call succeeds, a PHP stdObject is returned (which is the result of json decoding the response)
+   * If the method call succeeds, a PHP stdClass object is returned (which is the result of json decoding the response)
    *  Depending on the call, this may be a feed (= list) or entry object.
    *  In case of DELETE calls which don't generate a response, the method returns null (if no exception is raised, the DELETE call has succeeded).
    *
    * @param string $url Full RAWS URL, including the querystring
    * @param string $method Name of the HTTP method in capital letters ('GET', 'POST', 'PUT', 'DELETE', 'HEAD' are supported).
-   * @param array or stdObject $data If the request body contains data, this should contain a json serializable array or stdObject.
+   * @param array or stdClass $data If the request body contains data, this should contain a json serializable array or stdClass object.
    * @param string $filepath If the request body is a file (binary), this should contain the path to the file to be uploaded.
-   * @param decode $decode Set this to False if you don't want the response body to be decoded from json into a stdObject.
+   * @param decode $decode Set this to False if you don't want the response body to be decoded from json into a stdClass object.
    * @param array $extra_headers Sequential array of headers (strings) to be added to the request headers.
-   * @return stdObject corresponding to a json entry or feed, or null (in case of DELETE)
+   * @return stdClass Object corresponding to a json entry or feed, or null (in case of DELETE)
    */
   function do_request($url, $method, $data = null, $filepath = null, $decode = True, $extra_headers = null) 
   {
@@ -223,6 +234,7 @@ class JsonClient
    }
 
    curl_setopt($curl_handle, CURLOPT_USERPWD, $this->username . ":" . $this->password);
+   curl_setopt($curl_handle, CURLOPT_USERAGENT, $this->user_agent);
 
    switch ($method) {
      case 'GET':
@@ -305,6 +317,7 @@ class JsonClient
     //curl_setopt($curl_handle, CURLOPT_SSL_VERIFYPEER, false);
 
     curl_setopt($curl_handle, CURLOPT_USERPWD, $this->username . ":" . $this->password);
+    curl_setopt($curl_handle, CURLOPT_USERAGENT, $this->user_agent);
 
     # instructs curl not to return response in string, but stream to file instead
     #  Note: this also happens in case of error response (see WORKAROUND below)

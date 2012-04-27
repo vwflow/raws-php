@@ -1,5 +1,32 @@
 <?php
+# Copyright (C) 2012 rambla.eu
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
+/**
+ * @file Helper objects corresponding to resources of the META service.
+ *
+ * @see https://wiki.rambla.be/META_content_resource
+ * @package	raws-php
+ * @copyright rambla.eu, 2012
+ * @version 0.1 (2012/04/26)
+ */
+ 
+/**
+ * Class corresponding to a meta object, which may be part of the 'params' object inside a 'content' entry.
+ *
+ * @see https://wiki.rambla.be/META_content_resource#The_.27params.27_object
+ */
 class MetaObj
 {
   var $meta_name = "";
@@ -8,6 +35,16 @@ class MetaObj
   var $lang = "";
   var $attrs = "";
 	
+  /**
+   * Constructor.
+   *
+   * @see https://wiki.rambla.be/RAWS_meta_object
+   * @param string $meta_name The name of the metadata property (case-sensitive)
+   * @param string $vocab The name of a vocab instance
+   * @param string $text The metadata value
+   * @param string $lang ISO 639-1 abbreviation of the language being used
+   * @param array $attrs Associative array containing additional attributes (key, value are both strings) for this meta object.
+   */
 	function __construct($meta_name = null, $vocab = null, $text = null, $lang = null, $attrs = null) 
 	{
 	  $this->clear();
@@ -28,6 +65,9 @@ class MetaObj
     }
 	}
 	
+  /**
+   * Clears this object's data.
+   */
 	function clear()
   {
     $this->meta_name = "";
@@ -37,6 +77,11 @@ class MetaObj
     $this->attrs = array();
   }
 
+  /**
+   * Set the extra attrs array.
+   *
+   * @param array $attrs Associative array containing additional attributes (key, value are both strings) for the meta objects.
+   */
   function set_attrs($attrs)
   {
     foreach($attrs as $key => $value) {
@@ -48,6 +93,11 @@ class MetaObj
     }
   }
   
+  /**
+   * Does this meta object have additional attrs.
+   *
+   * @return bool True if at least one additional attr.
+   */
   function has_attrs() {
     $has_attrs = True;
     if (empty($this->attrs)) {
@@ -56,10 +106,20 @@ class MetaObj
     return $has_attrs;
   }
 
+  /**
+   * Get additional attrs.
+   *
+   * @return array Associative array containing additional attributes (key, value are both strings) for this meta object
+   */
   function get_attrs() {
     return $this->attrs;
   }
   
+  /**
+   * Store the object's datamembers in an array (that can serve as input for encoding the object into json)
+   *
+   * @return array Associative array (key, value are both strings).
+   */
   function to_array() 
   {
     $d = array();
@@ -74,6 +134,11 @@ class MetaObj
   }
 }
 
+/**
+ * Class corresponding to a file object, which may be part of the 'file' object inside a 'content' entry.
+ *
+ * @see https://wiki.rambla.be/META_content_resource#The_.27file.27_object
+ */
 class FileObj
 {
   var $path = "";
@@ -88,6 +153,15 @@ class FileObj
   var $framerate = "";
   var $samplerate = "";
 
+  /**
+   * Constructor.
+   *
+   * If you're creating a new Content object, it must contain at least one file object with the 'path' property being set.
+   * All other properties are optional.
+   *
+   * @param string $path relative path to the file on the CDN, starting from the root-directory of your user account
+   * @see https://wiki.rambla.be/META_content_resource#The_.27file.27_object
+   */
   function __construct($path = null, $media_type = null, $size = null, $duration = null, 
                       $container = null, $bitrate = null, $width = null, $height = null, 
                       $frames = null, $framerate = null, $samplerate = null)
@@ -128,6 +202,9 @@ class FileObj
     }
   }
   
+  /**
+   * Clears this object's data.
+   */
 	function clear()
   {
     $this->path = "";
@@ -145,11 +222,19 @@ class FileObj
     $this->samplerate = "";
   }
   
+  /**
+   * Set path according to META conventions.
+   */
   function set_path($path) 
   {
     $this->path = "/" . trim($path, "/");
   }
 
+  /**
+   * Store the object's datamembers in an array (that can serve as input for encoding the object into json)
+   *
+   * @return array Associative array (key, value are both strings).
+   */
   function to_array() 
   {
     $d = array();
@@ -169,6 +254,11 @@ class FileObj
 }
 
 
+/**
+ * Class corresponding to a 'content' entry.
+ *
+ * @see https://wiki.rambla.be/META_content_resource
+ */
 class MetaContent
 {
   var $id;
@@ -180,6 +270,21 @@ class MetaContent
   var $thumb_used;
   var $update_files;
   
+  /**
+   * Constructor.
+   *
+   * If you're creating a new Content object, it must contain at least one file_obj with the 'path' property being set.
+   * For more info, see https://wiki.rambla.be/META_content_resource#Create_new_content_instance
+   *
+   * @param string $name unique name by which the given media content is known on the CDN (US-ASCII characters only)
+   * @param array $file_objs Indexed array of FileObj objects
+   * @param array $tags Indexed array of tag strings
+   * @param array $meta_objs Indexed array of MetaObj objects
+   * @param string $thumb_used Relative path for the thumb to be used in playlists
+   * @param int $update_files Set to 1 if you want to update the FileObj's that are linked to an existing content resource (requires all FileObjs to be set on this object)
+   * @param string $yt_id Unique ID of the corresponding YouTube video (if any, otherwise empty string) 
+   * @see https://wiki.rambla.be/META_content_resource#Content_object_details
+   */
   function __construct($name = null, $file_objs = null, $tags = null, $meta_objs = null, $thumb_used = null, $update_files = null, $yt_id = null)
   {
 	  $this->clear();
@@ -206,6 +311,9 @@ class MetaContent
     }
   }
 
+  /**
+   * Clears this object's data.
+   */
 	function clear()
   {
     # files
@@ -329,59 +437,55 @@ class MetaContent
     $this->thumb_used = "/" . trim($thumb_used, "/");
   }
   
+  /**
+   * Fill up this object (will be cleared first) with data from an stdClass object (which is the result of json decoding a 'content' entry)
+   *
+   * @param stdClass Object corresponding to a 'content' entry (json decoded response from the META service).
+   */
   function from_entry($entry)
   {
     $this->clear();
-    if (property_exists($entry, "entry")) {
-      $this->id = $entry->entry->id;
-      $this->name = $entry->entry->content->params->name;
-      $this->meta_updated = $entry->entry->content->params->meta_updated;
-      $this->yt_id = $entry->entry->content->params->yt_id;
-      $this->thumb_used = $entry->entry->content->file_params->thumb_used;
-      $this->update_files = $entry->entry->content->file_params->update_files;
-      # set tags
-      if (property_exists($entry->entry->content->params, "tag")) {
-        foreach ($entry->entry->content->params->tag as $t) {
-          array_push($this->tags, $t);
-        }
-      }
-      # set meta objs
-      if (property_exists($entry->entry->content->params, "meta")) {
-        foreach ($entry->entry->content->params->meta as $m) {
-          array_push($this->meta_objs, new MetaObj($m->meta_name, $m->vocab, $m->text, $m->lang, get_object_vars($m)));
-        }
-      }
-      # set files
-      foreach ($entry->entry->content->file as $f) {
-        array_push($this->file_objs, new FileObj($f->path, $f->media_type, $f->size, $f->duration, $f->container, $f->bitrate, $f->width, $f->height, $f->frames, $f->framerate, $f->samplerate));
+    # get the inner entry obj
+    $inner_entry = null;
+    if (property_exists($entry, "entry")) { # the $entry object may look like {"entry":{"id":"xxx","content":{}}}
+      $inner_entry = $entry->entry;
+    }
+    elseif (property_exists($entry, "id")) { # the $entry object may also look like {"id":"xxx","content",{},...}
+      $inner_entry = $entry;
+    }
+    if (! $inner_entry) {
+      throw new Exception("MetaContent:from_entry() : invalid argument entry passed");
+    }
+
+    $this->id = $inner_entry->id;
+    $this->name = $inner_entry->content->params->name;
+    $this->meta_updated = $inner_entry->content->params->meta_updated;
+    $this->yt_id = $inner_entry->content->params->yt_id;
+    $this->thumb_used = $inner_entry->content->file_params->thumb_used;
+    $this->update_files = $inner_entry->content->file_params->update_files;
+    # set tags
+    if (property_exists($inner_entry->content->params, "tag")) {
+      foreach ($inner_entry->content->params->tag as $t) {
+        array_push($this->tags, $t);
       }
     }
-    elseif (property_exists($entry, "id")) {
-      $this->id = $entry->id;
-      $this->name = $entry->content->params->name;
-      $this->meta_updated = $entry->content->params->meta_updated;
-      $this->yt_id = $entry->content->params->yt_id;
-      $this->thumb_used = $entry->content->file_params->thumb_used;
-      $this->update_files = $entry->content->file_params->update_files;
-      # set tags
-      if (property_exists($entry->content->params, "tag")) {
-        foreach ($entry->content->params->tag as $t) {
-          array_push($this->tags, $t);
-        }
+    # set meta objs
+    if (property_exists($inner_entry->content->params, "meta")) {
+      foreach ($inner_entry->content->params->meta as $m) {
+        array_push($this->meta_objs, new MetaObj($m->meta_name, $m->vocab, $m->text, $m->lang, get_object_vars($m)));
       }
-      # set meta objs
-      if (property_exists($entry->content->params, "meta")) {
-        foreach ($entry->content->params->meta as $m) {
-          array_push($this->meta_objs, new MetaObj($m->meta_name, $m->vocab, $m->text, $m->lang, get_object_vars($m)));
-        }
-      }
-      # set files
-      foreach ($entry->content->file as $f) {
-        array_push($this->file_objs, new FileObj($f->path, $f->media_type, $f->size, $f->duration, $f->container, $f->bitrate, $f->width, $f->height, $f->frames, $f->framerate, $f->samplerate));
-      }
+    }
+    # set files
+    foreach ($inner_entry->content->file as $f) {
+      array_push($this->file_objs, new FileObj($f->path, $f->media_type, $f->size, $f->duration, $f->container, $f->bitrate, $f->width, $f->height, $f->frames, $f->framerate, $f->samplerate));
     }
   }
 
+  /**
+   * Store the object's datamembers in an array corresponding to a 'content' entry (ready for encoding into json)
+   *
+   * @return array Associative array (key, value are both strings).
+   */
   function to_entry() 
   {
     $entry = array("entry" => array("content" => array()));
