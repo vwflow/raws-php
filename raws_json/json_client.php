@@ -24,7 +24,7 @@
 /**
  * Exception raised by the REST client.
  */
-class ClientException extends Exception 
+class RawsClientException extends Exception 
 {
   public function __construct($message, $code=0) {
      parent::__construct($message,$code);
@@ -34,7 +34,7 @@ class ClientException extends Exception
 /**
  * Exception raised as a result of a HTTP error response.
  */
-class RequestException extends Exception 
+class RawsRequestException extends Exception 
 {
   public function __construct($message, $code=500) {
      parent::__construct($message,$code);
@@ -44,7 +44,7 @@ class RequestException extends Exception
 /**
  * Client for REST communication with web-services, using json as the data format.
  */
-class JsonClient
+class RawsJsonClient
 {
   var $username;
   var $password;
@@ -169,8 +169,8 @@ class JsonClient
   /**
    * Do a DELETE request.
    *
-   * A succeeded delete request doesn't return data.
-   * If the request doesn't succeed, an exception is thrown.
+   * A succeeded DELETE request doesn't return data.
+   * If the request doesn't succeed, a RawsRequestException is thrown.
    *
    * @param string $uri URI path or full URI.
    * @param string $querystr Query-string to be appended to the URI.
@@ -179,6 +179,21 @@ class JsonClient
 	{
 	  $url = $this->get_url($uri, $querystr);
 	  return $this->do_request($url, "DELETE");
+	}
+	
+  /**
+   * Do a HEAD request.
+   *
+   * A succeeded HEAD request doesn't return data.
+   * If the request doesn't succeed, a RawsRequestException is thrown.
+   *
+   * @param string $uri URI path or full URI.
+   * @param string $querystr Query-string to be appended to the URI.
+   */
+	function HEAD($uri, $querystr = null)
+	{
+	  $url = $this->get_url($uri, $querystr);
+	  return $this->do_request($url, "HEAD");
 	}
 
   /**
@@ -269,6 +284,12 @@ class JsonClient
      case 'DELETE':
        curl_setopt($curl_handle, CURLOPT_CUSTOMREQUEST, 'DELETE');
        break;
+     case 'HEAD':
+       curl_setopt($curl_handle, CURLOPT_CUSTOMREQUEST, 'HEAD');
+       curl_setopt($curl_handle, CURLOPT_BINARYTRANSFER, false);
+       curl_setopt($curl_handle, CURLOPT_RETURNTRANSFER, false);
+       curl_setopt($curl_handle, CURLOPT_NOBODY, True);
+       break;
    }
 
    $response = curl_exec($curl_handle);
@@ -278,7 +299,7 @@ class JsonClient
 #   echo "\n Response: " . $response;
 
    if ($code >= 300) {
-     throw new RequestException($response, $code);
+     throw new RawsRequestException($response, $code);
    }
 
    if ($response) {
@@ -304,7 +325,7 @@ class JsonClient
     # check if tgt_location_local is writable
     $res = fopen($filepath, 'wb+');
     if (! $res) {
-      throw new ClientException("Unable to open file location '" . $filepath . "' for writing.");
+      throw new RawsClientException("Unable to open file location '" . $filepath . "' for writing.");
     }
     fclose($res);
 
@@ -340,10 +361,27 @@ class JsonClient
       fclose($frc);
       // delete file
       unlink($filepath);
-      throw new RequestException($response, $code);
+      throw new RawsRequestException($response, $code);
     }
 
     return $filepath;
   }
+  
+  /**
+   * Creates the framework of an entry array (= array containing empty entry, content and params objects).
+   *
+   * @param string $uri URI path or full URI.
+   * @param string $querystr Query-string to be appended to the URI.
+   * @return string Full URI for the RAWS request
+   */
+	function get_empty_entry_array()
+	{
+	  $e = array();
+    $e["entry"] = array();
+    $e["entry"]["content"] = array();
+    $e["entry"]["content"]["params"] = array();
+    return $e;
+	}
+  
   
 }

@@ -55,7 +55,7 @@ class MetaService
       $this->server = $server;
     }
     $this->ssl = $ssl;
-    $this->json_client = new JsonClient($username, $password, $server, $ssl, $user_agent);
+    $this->json_client = new RawsJsonClient($username, $password, $server, $ssl, $user_agent);
 	}
 	
   # Content Methods
@@ -91,8 +91,8 @@ class MetaService
   /**
    * Create a new content instance.
    *
-   * Throws a RequestException if the instance could not be created.
-   * Throws a ClientException if the entry argument is invalid.
+   * Throws a RawsRequestException if the instance could not be created.
+   * Throws a RawsClientException if the entry argument is invalid.
    *
    * @param mixed $entry Associative array or stdClass object that can be json encoded into a valid content entry.
    * @return stdClass Object corresponding to the content entry that has been created.
@@ -107,8 +107,8 @@ class MetaService
   /**
    * Update an existing content instance.
    *
-   * Throws a RequestException if the instance could not be updated.
-   * Throws a ClientException if the entry argument is invalid.
+   * Throws a RawsRequestException if the instance could not be updated.
+   * Throws a RawsClientException if the entry argument is invalid.
    *
    * @param mixed $entry Associative array or stdClass object that can be json encoded into a valid content entry.
    * @return stdClass Object corresponding to the content entry that has been updated.
@@ -133,7 +133,7 @@ class MetaService
   /**
    * Delete a content instance.
    *
-   * Throws a RequestException if the instance could not be deleted.
+   * Throws a RawsRequestException if the instance could not be deleted.
    *
    * @param string $name Name that uniquely identifies the content entry.
    * @param bool $delete_files_from_cdn Set to False if you only want to delete the metadata and not the file(s) on the CDN.
@@ -176,7 +176,7 @@ class MetaService
   /**
    * Create a new vocab instance.
    *
-   * Throws a RequestException if the instance could not be created.
+   * Throws a RawsRequestException if the instance could not be created.
    *
    * @param string $name Vocabulary name (= required).
    * @param string $xml_namespace URL of the (XML) namespace (e.g. http://purl.org/dc/elements/1.1/) (= required)
@@ -225,7 +225,7 @@ class MetaService
   /**
    * Update an existing vocab instance.
    *
-   * Throws a RequestException if the instance could not be created.
+   * Throws a RawsRequestException if the instance could not be created.
    *
    * @param stdClass $vocab Object corresponding to an existing vocab instance
    * @param string $name Name of the vocab instance to be updated (optional, otherwise the id from the $vocab object is used)
@@ -247,7 +247,7 @@ class MetaService
   /**
    * Delete a vocab instance.
    *
-   * Throws a RequestException if the instance could not be deleted.
+   * Throws a RawsRequestException if the instance could not be deleted.
    *
    * @param string $name Name that uniquely identifies the vocab instance.
    * @see https://wiki.rambla.be/META_vocab_resource#DELETE
@@ -272,7 +272,7 @@ class MetaService
       $this->json_client->GET($uri);
       $exists = True;
     }
-    catch(RequestException $e) {
+    catch(RawsRequestException $e) {
       $exists = False;
     }
     return $exists;
