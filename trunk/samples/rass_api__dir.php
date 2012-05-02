@@ -32,7 +32,7 @@ try {
 
   # retrieve feed of dirs
   echo "\nGetting dir list...";
-  $feed = $rass->getDirFeed("/test/");
+  $feed = $rass->getDirList("/test/");
   foreach($feed->feed->entry as $e) {
     echo "\n* retrieved dir: " . $e->id . " with size = " . $e->content->params->size;
   }
