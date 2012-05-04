@@ -52,7 +52,7 @@ class RassService
     $this->password = $password;
     $this->server = $server;
     $this->ssl = $ssl;
-    $this->json_client = new RawsJsonClient($username, $password, $server, $ssl, $user_agent);
+    $this->json_client = new RawsJsonClient($username, $password, $this->server, $ssl, $user_agent);
 	}
 	  
 	
@@ -112,7 +112,7 @@ class RassService
    *
    * @param string $path Relative path to the file on the CDN.
    * @return bool True if exists
-   * @see https://rampubwiki.wiki.rambla.be/RASS_item_resource#HEAD_request
+   * @see https://wiki.rambla.be/RASS_item_resource#HEAD_request
    */
   function itemExists($path)
   {
@@ -125,7 +125,7 @@ class RassService
    *
    * @param string $url URL (path) for the item resource.
    * @return bool True if exists
-   * @see https://rampubwiki.wiki.rambla.be/RASS_item_resource#HEAD_request
+   * @see https://wiki.rambla.be/RASS_item_resource#HEAD_request
    */
   function itemUrlExists($uri)
   {

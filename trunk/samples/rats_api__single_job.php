@@ -53,7 +53,7 @@ try {
     echo "\n\nThe client_passthru field contains the following string: " . $job->entry->cdn_report->client_passthru; 
   }
   
-  # if metadata is enabled for your user account => a META content instance has been created (see https://rampubwiki.wiki.rambla.be/META_content_resource)
+  # if metadata is enabled for your user account => a META content instance has been created (see https://wiki.rambla.be/META_content_resource)
   if ($job->entry->cdn_report->content) {
     echo "\n\nA META content instance has been created at " . $job->entry->cdn_report->content; 
   }

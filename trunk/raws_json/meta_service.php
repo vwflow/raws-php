@@ -55,7 +55,7 @@ class MetaService
       $this->server = $server;
     }
     $this->ssl = $ssl;
-    $this->json_client = new RawsJsonClient($username, $password, $server, $ssl, $user_agent);
+    $this->json_client = new RawsJsonClient($username, $password, $this->server, $ssl, $user_agent);
 	}
 	
   # Content Methods
@@ -225,7 +225,7 @@ class MetaService
   /**
    * Update an existing vocab instance.
    *
-   * Throws a RawsRequestException if the instance could not be created.
+   * Throws a RawsRequestException if the instance could not be updated.
    *
    * @param stdClass $vocab Object corresponding to an existing vocab instance
    * @param string $name Name of the vocab instance to be updated (optional, otherwise the id from the $vocab object is used)

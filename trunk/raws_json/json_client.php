@@ -219,6 +219,7 @@ class RawsJsonClient
   function do_request($url, $method, $data = null, $filepath = null, $decode = True, $extra_headers = null) 
   {
    $curl_handle = curl_init();
+   # echo "\ndo_request(): url = $url, method = $method";
    
    # set HTTP headers
    $headers = array();
@@ -295,8 +296,8 @@ class RawsJsonClient
    $response = curl_exec($curl_handle);
    $code = curl_getinfo($curl_handle, CURLINFO_HTTP_CODE);
    curl_close($curl_handle);
-#   echo "\n Response code: " . $code;
-#   echo "\n Response: " . $response;
+  # echo "\n Response code: " . $code;
+  # echo "\n Response: " . $response;
 
    if ($code >= 300) {
      throw new RawsRequestException($response, $code);

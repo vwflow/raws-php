@@ -101,9 +101,12 @@ class RatsService
       $this->server = $server;
     }
     $this->ssl = $ssl;
-    $this->json_client = new RawsJsonClient($username, $password, $server, $ssl, $user_agent);
+    $this->json_client = new RawsJsonClient($username, $password, $this->server, $ssl, $user_agent);
 	}
 
+  # SRC resource
+  # ------------
+  
   /**
    * Upload a src to RATS -> create src instance.
    *
@@ -123,6 +126,48 @@ class RatsService
     return $this->json_client->PUT($uri, $local_path, null, $extra_headers);
 	}
 	
+	/**
+   * Get a single src instance.
+   *
+   * @param string $filename Name that uniquely identifies the src instance.
+   * @return stdClass Object corresponding to a src entry.
+   * @see https://wiki.rambla.be/RATS_src_resource#GET
+   */
+	function getSrcInstance($filename)
+	{
+    $uri = "/src/" . $this->username . "/" . $filename . "/";
+    return $this->json_client->GET($uri);
+	}
+  
+	 /**
+    * Get a list of src instances.
+    *
+    * @param string $querystr Querystring to be used when calling GET src.
+    * @return stdClass Corresponds to RATS src feed
+    */
+ 	function getSrcList($querystr = null)
+	{
+	  $uri = "/src/";
+    return $this->json_client->GET($uri, $querystr);
+	}
+
+  /**
+   * Delete a src instance.
+   *
+   * Throws a RawsRequestException if the instance could not be deleted.
+   *
+   * @param string $filename Name that uniquely identifies the src instance.
+   * @see https://wiki.rambla.be/RATS_src_resource#DELETE
+   */
+	function deleteSrc($filename)
+	{
+	  $uri = "/src/" . $this->username . "/" . $filename . "/";
+    return $this->json_client->DELETE($uri);
+	}
+  
+	
+	# JOB resource
+	# ------------
 
   /**
    * Launch a single transcoding job (= one src file => one transcoded file) and publish the transcoded file on the CDN.
@@ -135,11 +180,11 @@ class RatsService
    * @param string $tgt_location        Location (= relative path + filename without extension) at which the transcoded file will be published on the CDN.
    * @param string $client_passthru     Placeholder for data to receive back in the job's report (NOTE: all XML reserved characters should be escaped).
    * @param string $proc               Comma-separated string containing Proc IDs, to be executed while processing the job.
-   * @param string $client_input        Additional data to be used by the Procs (see https://rampubwiki.wiki.rambla.be/RATS_job_resource#proc_.26_client_input)
+   * @param string $client_input        Additional data to be used by the Procs (see https://wiki.rambla.be/RATS_job_resource#proc_.26_client_input)
    * @param string $startpos            Offset in seconds (or percentage, using the '%'-sign) from the beginning of the src file, at which transcoding must start.
    * @param string $endpos              Offset in seconds from the end of the src file, at which transcoding must end.
    * @return stdClass Corresponds to RATS job entry
-   * @see https://rampubwiki.wiki.rambla.be/RATS_job_resource
+   * @see https://wiki.rambla.be/RATS_job_resource
    */
   public function createSingleJob($format, $src_filename, $tgt_location, $client_passthru = null, $proc = null, $client_input = null, $startpos = null, $endpos = null)
   {
@@ -158,9 +203,9 @@ class RatsService
    * @param string $snapshot_interval   Integer that indicates the interval at which snapshots should be taken (= if a snapshot profile is part of the formatgroup).
    * @param string $client_passthru     Placeholder for data to receive back in the job's report (NOTE: all XML reserved characters should be escaped).
    * @param string $proc               Comma-separated string containing Proc IDs, to be executed while processing the job.
-   * @param string $client_input        Additional data to be used by the Procs (see https://rampubwiki.wiki.rambla.be/RATS_job_resource#proc_.26_client_input)
+   * @param string $client_input        Additional data to be used by the Procs (see https://wiki.rambla.be/RATS_job_resource#proc_.26_client_input)
    * @return stdClass Corresponds to RATS job entry
-   * @see https://rampubwiki.wiki.rambla.be/RATS_job_resource
+   * @see https://wiki.rambla.be/RATS_job_resource
    */
   public function createBatchJob($formatgroup, $src_filename, $tgt_location, $snapshot_interval = null, $client_passthru = null, $proc = null, $client_input = null)
   {
@@ -183,11 +228,11 @@ class RatsService
    * @param string $snapshot_interval       Integer that indicates the interval at which snapshots should be taken (= if a snapshot profile is part of the formatgroup).
    * @param string $client_passthru         Placeholder for data to receive back in the job's report (NOTE: all XML reserved characters should be escaped).
    * @param string $proc                   Comma-separated string containing Proc IDs, to be executed while processing the job.
-   * @param string $client_input            Additional data to be used by the Procs (see https://rampubwiki.wiki.rambla.be/RATS_job_resource#proc_.26_client_input)
+   * @param string $client_input            Additional data to be used by the Procs (see https://wiki.rambla.be/RATS_job_resource#proc_.26_client_input)
    * @param string $startpos                Offset in seconds (or percentage, using the '%'-sign) from the beginning of the src file, at which transcoding must start.
    * @param string $endpos                  Offset in seconds from the end of the src file, at which transcoding must end.
    * @return stdClass Corresponds to RATS job entry
-   * @see https://rampubwiki.wiki.rambla.be/RATS_job_resource
+   * @see https://wiki.rambla.be/RATS_job_resource
    */
   public function createJob($format = null, $formatgroup = null, $input = null, $src_or_input_location = null, $output = null, $tgt_location = null,
                             $snapshot_interval = null, $client_passthru = null, $proc = null, $client_input = null, $startpos = null, $endpos = null)
@@ -274,7 +319,387 @@ class RatsService
     }
     return $completed;
 	}
+
+  /**
+   * Get a single job instance.
+   *
+   * @param string $id ID that uniquely identifies the job instance.
+   * @return stdClass Object corresponding to a job entry.
+   * @see https://wiki.rambla.be/RATS_job_resource
+   */
+	function getJobInstance($id)
+	{
+	  $uri = "/job/" . $id;
+    return $this->json_client->GET($uri);
+	}
+
+	 /**
+    * Get a list of job instances.
+    *
+    * @param string $querystr Querystring to be used when calling GET job.
+    * @return stdClass Corresponds to RATS job feed
+    */
+ 	function getJobList($querystr = null)
+	{
+	  $uri = "/job/";
+    return $this->json_client->GET($uri, $querystr);
+	}
 	
+	# INPUT resource
+	# -------------------------------
+
+  /**
+    * Get a list of input instances.
+    *
+    * @param string $querystr Querystring to be used when calling GET input.
+    * @return stdClass Corresponds to RATS input feed
+    */
+ 	function getInputList($querystr = null)
+	{
+	  $uri = "/input/";
+    return $this->json_client->GET($uri, $querystr);
+	}
+	
+	/**
+   * Get a single input instance.
+   *
+   * @param string $id ID that uniquely identifies the input instance.
+   * @return stdClass Object corresponding to a input entry.
+   * @see https://wiki.rambla.be/RATS_input_resource
+   */
+	function getInputInstance($id)
+	{
+	  $uri = "/input/" . $id;
+    return $this->json_client->GET($uri);
+	}
+  
+	/**
+   * Create a new input instance.
+   *
+   * Throws a RawsRequestException if the instance could not be created.
+   *
+   * @param array $a_params Associative array of input params.
+   * @return stdClass Object corresponding to a input entry.
+   * @see https://wiki.rambla.be/RATS_input_resource
+   */
+	function createInput($a_params)
+	{
+	  $e = array();
+    $e["entry"] = array();
+    $e["entry"]["content"] = array();
+    $e["entry"]["content"]["params"] = $a_params;
+    return $this->json_client->POST("/input/", $e);
+	}
+	
+	/**
+   * Update an existing input instance.
+   *
+   * Throws a RawsRequestException if the instance could not be updated.
+   *
+   * @param stdClass $input Corresponds to a RATS input entry
+   * @return stdClass Corresponds to RATS input entry
+   * @see https://wiki.rambla.be/RATS_input_resource
+   */
+ 	function updateInput($input)
+	{
+    return $this->json_client->POST($input->entry->id, $input);
+	}
+	
+	/**
+   * Delete input instance.
+   *
+   * Throws a RawsRequestException if the instance could not be deleted.
+   *
+   * @param string $id ID that uniquely identifies the input instance.
+   * @see https://wiki.rambla.be/RATS_input_resource#DELETE
+   */
+	function deleteInput($id)
+	{
+	  $uri = "/input/" . $id;
+    return $this->json_client->DELETE($uri);
+	}
+  
+	# OUTPUT resource
+	# -------------------------------
+
+  /**
+    * Get a list of output instances.
+    *
+    * @param string $querystr Querystring to be used when calling GET output.
+    * @return stdClass Corresponds to RATS output feed
+    */
+ 	function getOutputList($querystr = null)
+	{
+	  $uri = "/output/";
+    return $this->json_client->GET($uri, $querystr);
+	}
+	
+	/**
+   * Get a single output instance.
+   *
+   * @param string $id ID that uniquely identifies the output instance.
+   * @return stdClass Object corresponding to a output entry.
+   * @see https://wiki.rambla.be/RATS_output_resource
+   */
+	function getOutputInstance($id)
+	{
+	  $uri = "/output/" . $id;
+    return $this->json_client->GET($uri);
+	}
+  
+	/**
+   * Create a new output instance.
+   *
+   * Throws a RawsRequestException if the instance could not be created.
+   *
+   * @param array $a_params Associative array of output params.
+   * @return stdClass Object corresponding to a output entry.
+   * @see https://wiki.rambla.be/RATS_output_resource
+   */
+	function createOutput($a_params)
+	{
+	  $e = array();
+    $e["entry"] = array();
+    $e["entry"]["content"] = array();
+    $e["entry"]["content"]["params"] = $a_params;
+    return $this->json_client->POST("/output/", $e);
+	}
+	
+	/**
+   * Update an existing output instance.
+   *
+   * Throws a RawsRequestException if the instance could not be updated.
+   *
+   * @param stdClass $output Corresponds to a RATS output entry
+   * @return stdClass Corresponds to RATS output entry
+   * @see https://wiki.rambla.be/RATS_output_resource
+   */
+ 	function updateOutput($output)
+	{
+    return $this->json_client->POST($output->entry->id, $output);
+	}
+	
+	/**
+   * Delete output instance.
+   *
+   * Throws a RawsRequestException if the instance could not be deleted.
+   *
+   * @param string $id ID that uniquely identifies the output instance.
+   * @see https://wiki.rambla.be/RATS_output_resource#DELETE
+   */
+	function deleteOutput($id)
+	{
+	  $uri = "/output/" . $id;
+    return $this->json_client->DELETE($uri);
+	}
+	
+	# FORMAT resource
+	# -------------------------------
+
+  /**
+    * Get a list of format instances.
+    *
+    * @param string $querystr Querystring to be used when calling GET format.
+    * @return stdClass Corresponds to RATS format feed
+    */
+ 	function getFormatList($querystr = null)
+	{
+	  $uri = "/format/";
+    return $this->json_client->GET($uri, $querystr);
+	}
+	
+	/**
+   * Get a single format instance.
+   *
+   * @param string $id ID that uniquely identifies the format instance.
+   * @return stdClass Object corresponding to a format entry.
+   * @see https://wiki.rambla.be/RATS_format_resource
+   */
+	function getFormatInstance($id)
+	{
+	  $uri = "/format/" . $id;
+    return $this->json_client->GET($uri);
+	}
+  
+	/**
+   * Create a new format instance.
+   *
+   * Throws a RawsRequestException if the instance could not be created.
+   *
+   * @param array $a_params Associative array of format params.
+   * @return stdClass Object corresponding to a format entry.
+   * @see https://wiki.rambla.be/RATS_format_resource
+   */
+	function createFormat($a_params)
+	{
+	  $e = array();
+    $e["entry"] = array();
+    $e["entry"]["content"] = array();
+    $e["entry"]["content"]["params"] = $a_params;
+    return $this->json_client->POST("/format/", $e);
+	}
+	
+	/**
+   * Update an existing format instance.
+   *
+   * Throws a RawsRequestException if the instance could not be updated.
+   *
+   * @param stdClass $format Corresponds to a RATS format entry
+   * @return stdClass Corresponds to RATS format entry
+   * @see https://wiki.rambla.be/RATS_format_resource
+   */
+ 	function updateFormat($format)
+	{
+    return $this->json_client->POST($format->entry->id, $format);
+	}
+	
+	/**
+   * Delete format instance.
+   *
+   * Throws a RawsRequestException if the instance could not be deleted.
+   *
+   * @param string $id ID that uniquely identifies the format instance.
+   * @see https://wiki.rambla.be/RATS_format_resource#DELETE
+   */
+	function deleteFormat($id)
+	{
+	  $uri = "/format/" . $id;
+    return $this->json_client->DELETE($uri);
+	}
+  
+	# TRANSC resource
+	# ------------
+
+	 /**
+    * Get a list of transc instances.
+    *
+    * @param string $querystr Querystring to be used when calling GET transc.
+    * @return stdClass Corresponds to RATS transc feed
+    */
+ 	function getTranscList($querystr = null)
+	{
+	  $uri = "/transc/";
+    return $this->json_client->GET($uri, $querystr);
+	}
+	
+  /**
+   * Get a single transc instance.
+   *
+   * @param string $filename Name that uniquely identifies the transc instance.
+   * @return stdClass Object corresponding to a transc entry.
+   * @see https://wiki.rambla.be/RATS_transc_resource
+   */
+	function getTranscInstance($filename)
+	{
+	  $uri = "/transc/" . $this->username . "/" . $filename;
+    return $this->json_client->GET($uri);
+	}
+	
+	/**
+   * Download the transc file from RATS.
+   *
+   * This method will stream the file to a local path.
+   *
+   * @param string $filename Name that uniquely identifies the transc instance.
+   * @param string $local_path Local path to the file that should hold the downloaded file.
+   * @return string Path to which the file has been downloaded.
+   * @see https://wiki.rambla.be/RATS_transc_resource
+   */
+	function getTranscFile($filename, $local_path)
+	{
+	  $uri = "/transc/" . $this->username . "/" . $filename;
+    return $this->json_client->GET_FILE($uri, $local_path);
+	}
+  
+  /**
+   * Delete a transc instance.
+   *
+   * Throws a RawsRequestException if the instance could not be deleted.
+   *
+   * @param string $filename Name that uniquely identifies the transc instance.
+   * @see https://wiki.rambla.be/RATS_transc_resource#DELETE
+   */
+	function deleteTransc($filename)
+	{
+	  $uri = "/transc/" . $this->username . "/" . $filename;
+    return $this->json_client->DELETE($uri);
+	}
+  
+	# OVERLAY resource
+	# ----------------
+	
+  /**
+   * Upload a overlay file to RATS -> create overlay instance.
+   *
+   * If a file with the same filename already exist, a suffix will be appended to the uploaded file. So make sure to check the src id or filename in the response entry.
+   *
+   * @param string $filename Preferred name for the file to be created (if a file with the same name already exists at the given location, a suffix will be appended).
+   * @param string $local_path Local path to the file that needs to be uploaded.
+   * @return stdClass Corresponds to RATS overlay entry
+   * @see https://wiki.rambla.be/RATS_src_resource#POST_src
+   */
+ 	function createOverlay($filename, $local_path)
+	{
+	  $uri = "/overlay/";
+	  $extra_headers = array('Slug: ' . $filename);
+
+    return $this->json_client->PUT($uri, $local_path, null, $extra_headers);
+	}
+
+	
+  /**
+   * Update an existing overlay instance.
+   *
+   * Throws a RawsRequestException if the instance could not be updated.
+   *
+   * @param stdClass $overlay Corresponds to a RATS overlay entry
+   * @return stdClass Corresponds to RATS overlay entry
+   * @see https://wiki.rambla.be/RATS_overlay_resource
+   */
+ 	function updateOverlay($overlay)
+	{
+    return $this->json_client->POST($overlay->entry->id, $overlay);
+	}
+	
+  /**
+   * Get a single overlay instance.
+   *
+   * @param string $id ID that uniquely identifies the overlay instance.
+   * @return stdClass Object corresponding to a overlay entry.
+   * @see https://wiki.rambla.be/RATS_overlay_resource
+   */
+	function getOverlayInstance($id)
+	{
+	  $uri = "/overlay/" . $id;
+    return $this->json_client->GET($uri);
+	}
+
+   /**
+    * Get a list of overlay instances.
+    *
+    * @param string $querystr Querystring to be used when calling GET overlay.
+    * @return stdClass Corresponds to RATS overlay feed
+    */
+ 	function getOverlayList($querystr = null)
+	{
+	  $uri = "/overlay/";
+    return $this->json_client->GET($uri, $querystr);
+	}
+
+  /**
+   * Delete a overlay instance.
+   *
+   * Throws a RawsRequestException if the instance could not be deleted.
+   *
+   * @param string $id ID that uniquely identifies the overlay instance.
+   * @see https://wiki.rambla.be/RATS_overlay_resource#DELETE
+   */
+	function deleteOverlay($id)
+	{
+	  $uri = "/overlay/" . $id;
+    return $this->json_client->DELETE($uri);
+	}
+ 	
 	
 
 }
