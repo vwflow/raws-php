@@ -30,7 +30,7 @@ $msg_timestamp = time() + (3 * 60 * 60);        # requests using this page will 
 $hmac = md5($secret.$msg_timestamp.$msg_data);  # generate the HMAC
 
 # optional variables
-$upload_dir = "mydir";
+$publish_dir = "mydir";
 
 $html = <<<EOT
   <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -40,16 +40,16 @@ $html = <<<EOT
   <title>Test file_upload1</title>
   </head>
   <body>
-    <form id="MyForm" action="http://rass.$cdn.rambla.be/file_upload1/$username/" enctype="multipart/form-data" method="POST">
-    <input type="file" name="rass_file" />
+    <form id="MyForm" action="http://rass.$cdn.rambla.be/file_upload/$username/" enctype="multipart/form-data" method="POST">
+    <input type="file" name="MyFile" />
     <input type="submit" value="Upload">
-    <input type="hidden" name="rass_info" value="{&quot;redirect&quot;:&quot;$redirect&quot;,&quot;msg_data&quot;:&quot;$msg_data&quot;,&quot;msg_timestamp&quot;:&quot;$msg_timestamp&quot;,&quot;upload_dir&quot;:&quot;$upload_dir&quot;}" />
-    <input type="hidden" name="rass_hmac" value="$hmac">
+    <input type="hidden" name="raws_info" value="{&quot;redirect&quot;:&quot;$redirect&quot;,&quot;msg_data&quot;:&quot;$msg_data&quot;,&quot;msg_timestamp&quot;:&quot;$msg_timestamp&quot;,&quot;publish_dir&quot;:&quot;$publish_dir&quot;}" />
+    <input type="hidden" name="raws_hmac" value="$hmac">
     </form>
   </body>
 EOT;
 
-$file = './test_file_upload1.html';
+$file = './test_file_upload.html';
 file_put_contents($file, $html);
 
 

@@ -287,5 +287,36 @@ class RassService
     }
 	}
   
+  # file_upload methods
+  # -------------------
+
+	/**
+   * Upload a file to the CDN using a shared secret + timestamp for authentication (eg for two-step authentication in insecure environments).
+   *
+   * This method will stream the file (= not load the whole file into memory).
+   *
+   * @param string $filename Preferred name for the file to be created (if a file with the same name already exists at the given location, a suffix will be appended).
+   * @param string $local_path Local path to the file that needs to be uploaded.
+   * @param string $secret Shared secret attached to your RASS user (set it at https://rass.cdn0x.rambla.be/admin/rass/rassuser/).
+   * @param int $hmac_valid_seconds Number of seconds during which the HMAC will be considered as valid by RATS (default = 30).
+   * @param string $publish_dir Directory on the CDN in which transcoded files will be published (default = root).
+   * @return JSON object containing the URL to the file on the CDN
+   * @see https://wiki.rambla.be/RATS_src_resource#POST_src
+   */
+ 	function doFileUpload($filename, $local_path, $secret, $hmac_valid_seconds = 30, $publish_dir = "")
+	{
+	  $uri = "/file_upload_m/" . $this->username . "/";
+	  $msg_data = uniqid(rand(), true); # generate unique id
+    date_default_timezone_set('Europe/Brussels');
+    $msg_timestamp = time() + $hmac_valid_seconds; # requests using this page will be valid during three hours
+    $raws_hmac = md5($secret.$msg_timestamp.$msg_data);
+
+    $raws_info = <<<EOT
+{"msg_data":"$msg_data","msg_timestamp":"$msg_timestamp","publish_filename":"$filename","publish_dir":"$publish_dir"}
+EOT;
+ 	  $extra_headers = array('x-raws-info: ' . $raws_info, "x-raws-hmac: " . $raws_hmac);
+
+    return $this->json_client->PUT($uri, $local_path, null, $extra_headers);
+	}
 
 }
