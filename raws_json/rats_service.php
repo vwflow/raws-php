@@ -700,6 +700,43 @@ class RatsService
     return $this->json_client->DELETE($uri);
 	}
  	
+	# SRCENCODE resource
+	# ----------------
 	
+	/**
+   * Upload a src to RATS, to be automatically encoded and published.
+   *
+   * This method will stream the file (= not load the whole file into memory).
+   *
+   * @see https://wiki.rambla.be/RATS_srcencode_resource#PUT
+   * @param string $filename Preferred name for the file to be created (if a file with the same name already exists at the given location, a suffix will be appended).
+   * @param string $local_path Local path to the file that needs to be uploaded.
+   * @param string $formatgroup_id Numerical ID of your custom RATS formatgroup, to be used for transcoding the src file.
+   * @param string $secret Shared secret attached to your custom RATS formatgroup.
+   * @param int $hmac_valid_seconds Number of seconds during which the HMAC will be considered as valid by RATS (default = 30).
+   * @param string $publish_dir Directory on the CDN in which transcoded files will be published (default = root).
+   * @param string $client_passthru Client specific data in JSON format (should be valid json, use json_encode() to generate it !!),
+   *                                which can be retrieved later as part of a notification or as the result of polling the job resource (optional).
+   * @param array $proc_ids Array consisting of strings that refer to a proc ID (e.g. array(RATS_PROC_EMAIL_JSON, RATS_PROC_POST_JSON)).
+   * @return JSON object containing the URL of a RATS job that has been launched
+   * @see https://wiki.rambla.be/RATS_src_resource#POST_src
+   */
+ 	function doSrcencode($filename, $local_path, $formatgroup_id, $formatgroup_secret, $hmac_valid_seconds = 30, $publish_dir = "", $client_passthru = "", $proc_ids = array())
+	{
+	  $uri = "/srcencode_m/" . $this->username . "/";
+	  $msg_data = uniqid(rand(), true); # generate unique id
+    date_default_timezone_set('Europe/Brussels');
+    $msg_timestamp = time() + $hmac_valid_seconds; # requests using this page will be valid during three hours
+    $raws_hmac = md5($formatgroup_secret.$msg_timestamp.$msg_data);
+    
+    $proc_ids = json_encode($proc_ids);
+    $raws_info = <<<EOT
+{"msg_data":"$msg_data","msg_timestamp":"$msg_timestamp","publish_filename":"$filename","publish_dir":"$publish_dir","formatgroup_id":"$formatgroup_id","client_passthru":$client_passthru,"proc_ids":$proc_ids}
+EOT;
+ 	  $extra_headers = array('x-raws-info: ' . $raws_info, "x-raws-hmac: " . $raws_hmac);
+
+    return $this->json_client->PUT($uri, $local_path, null, $extra_headers);
+	}
+ 
 
 }

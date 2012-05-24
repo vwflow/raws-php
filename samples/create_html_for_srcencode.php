@@ -30,7 +30,7 @@ $msg_timestamp = time() + (3 * 60 * 60);        # requests using this page will 
 $hmac = md5($secret.$msg_timestamp.$msg_data);  # generate the HMAC
 
 # optional variables
-$export_dir = "mydir/mysubdir/";                # publish encoded files in this directory on the CDN
+$publish_dir = "mydir/mysubdir/";                # publish encoded files in this directory on the CDN
 $snapshot_interval = "25";                      # take snapshot after every 25% of the video
 $proc_id = "13";                                # email CDN report in JSON format
 $client_passthru = "some client specific data"; # client-specific data that can be retrieved later (via GET job or CDN report notification)
@@ -43,10 +43,10 @@ $html = <<<EOT
   </head>
   <body>
     <form id="MyForm" action="http://rats.enc01.rambla.be/srcencode/$username/" enctype="multipart/form-data" method="POST">
-    <input type="file" name="rats_file" />
+    <input type="file" name="raws_file" />
     <input type="submit" value="Upload">
-    <input type="hidden" name="rats_info" value="{&quot;formatgroup_id&quot;:&quot;$formatgroup_id&quot;,&quot;redirect&quot;:&quot;$redirect&quot;,&quot;msg_data&quot;:&quot;$msg_data&quot;,&quot;msg_timestamp&quot;:&quot;$msg_timestamp&quot;,&quot;export_dir&quot;:&quot;$export_dir&quot;,&quot;snapshot_interval&quot;:&quot;$snapshot_interval&quot;,&quot;proc_ids&quot;:[&quot;$proc_id&quot;],&quot;client_passthru&quot;:&quot;$client_passthru&quot;}" />
-    <input type="hidden" name="rats_hmac" value="$hmac">
+    <input type="hidden" name="raws_info" value="{&quot;formatgroup_id&quot;:&quot;$formatgroup_id&quot;,&quot;redirect&quot;:&quot;$redirect&quot;,&quot;msg_data&quot;:&quot;$msg_data&quot;,&quot;msg_timestamp&quot;:&quot;$msg_timestamp&quot;,&quot;publish_dir&quot;:&quot;$publish_dir&quot;,&quot;snapshot_interval&quot;:&quot;$snapshot_interval&quot;,&quot;proc_ids&quot;:[&quot;$proc_id&quot;],&quot;client_passthru&quot;:&quot;$client_passthru&quot;}" />
+    <input type="hidden" name="raws_hmac" value="$hmac">
     </form>
   </body>
 EOT;
