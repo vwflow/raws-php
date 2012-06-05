@@ -1,0 +1,4 @@
+Thanks for downloading the PHP client for Rambla Web Services.
+
+To install the library, copy the 'raws_json' directory to a location that is part of your PHP path. 
+The library requires cURL support for PHP to be enabled. There are no further dependencies. 
