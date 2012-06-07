@@ -79,7 +79,7 @@ class RassService
 	  if ($dirpath) {
   	  $uri = $uri . rtrim($dirpath, "/") . "/";
 	  }
-	  $uri = $uri . $filename . "/";
+#	  $uri = $uri . $filename . "/";
 	  
 	  $querystring = null;
 	  if ($create_dirs) {
