@@ -36,7 +36,7 @@ try {
   
   # create content instance
   $f = array();
-  $f[] = new FileObj($path = $item1->entry->attrs->path, $media_type = "video");
+  $f[] = new FileObj($path = $item1->entry->content->params->path, $media_type = "video");
   $content = new MetaContent($name = "myfile_with_meta", $file_objs = $f);
   $content->tags = array("een", "twee", "drie");
   $content_obj = $meta->createContent($content->to_entry());

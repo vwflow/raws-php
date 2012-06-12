@@ -45,8 +45,8 @@ try {
 
   # Create content instance with multiple languages for "/test/content/big_buck_bunny.mp4"
   $content_obj1 = new MetaContent("big_buck_bunny");
-  $content_obj1->add_file_obj($item1->entry->attrs->path);
-  $content_obj1->add_file_obj($item1b->entry->attrs->path);
+  $content_obj1->add_file_obj($item1->entry->content->params->path);
+  $content_obj1->add_file_obj($item1b->entry->content->params->path);
   $content_obj1->add_meta_obj("title", "media", "Big Buck Bunny", "en");
   $content_obj1->add_meta_obj("description", "media", "Big Buck Bunny is a short computer animated film by the Blender Institute, part of the Blender Foundation.", "en");
   $content_obj1->add_meta_obj("keywords", "media", "bunny, animation, Blender", "en");
@@ -76,7 +76,7 @@ try {
 
   # Create content instance without meta objects for "/test/content/sintel.mp4"
   $content_obj2 = new MetaContent("sintel");
-  $content_obj2->add_file_obj($item2->entry->attrs->path);
+  $content_obj2->add_file_obj($item2->entry->content->params->path);
   $content = $meta->createContent($content_obj2->to_entry());
   echo "\nCreated new content instance with name = " . $content->entry->content->params->name . "\n";
 
