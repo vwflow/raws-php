@@ -35,7 +35,7 @@ try {
   
   # create content instance without metadata
   $content_obj = new MetaContent("big_buck_bunny");
-  $content_obj->add_file_obj($item->entry->attrs->path);
+  $content_obj->add_file_obj($item->entry->content->params->path);
   $content = $meta->createContent($content_obj->to_entry());
   echo "\nCreated new content instance with name = " . $content->entry->content->params->name . "\n";
 

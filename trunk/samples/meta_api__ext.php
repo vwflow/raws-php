@@ -36,7 +36,7 @@ try {
   
   # create content instance for item1
   $f = array();
-  $f[] = new FileObj($item1->entry->attrs->path);
+  $f[] = new FileObj($item1->entry->content->params->path);
   $m = array();
   $m[] = new MetaObj("Title", "rss", "My first file", "en");
   $m[] = new MetaObj("Description", "rss", "Description of my first file", "en");
@@ -47,7 +47,7 @@ try {
   
   # create content instance for item2
   $f = array();
-  $f[] = new FileObj($item2->entry->attrs->path, "video");
+  $f[] = new FileObj($item2->entry->content->params->path, "video");
   $m = array();
   $m[] = new MetaObj("Title", "rss", "My second file", "en");
   $m[] = new MetaObj("Description", "rss", "Description of my second file", "en");

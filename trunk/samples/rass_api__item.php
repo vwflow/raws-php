@@ -31,15 +31,15 @@ try {
   # upload file to CDN
   $item = $rass->createItem("/test/sample/", "item.mp4", LOCAL_PATH, True);
   echo "\nCreated item: " . $item->entry->id . "\n";
-  echo "\nItem has relative path = " . $item->entry->attrs->path . "\n";
+  echo "\nItem has relative path = " . $item->entry->content->params->path . "\n";
 
   # download file via RASS
-  $local_path = $rass->getItem($item->entry->attrs->path, DOWNLOAD_PATH);
+  $local_path = $rass->getItem($item->entry->content->params->path, DOWNLOAD_PATH);
   echo "\nDownloaded item to location: " . $local_path . "\n";
   
   # delete file from cdn
-  $rass->deleteItem($item->entry->attrs->path);
-  echo "\nDeleted item with path = " . $item->entry->attrs->path . "\n";
+  $rass->deleteItem($item->entry->content->params->path);
+  echo "\nDeleted item with path = " . $item->entry->content->params->path . "\n";
 
 }
 catch(Exception $e) {

@@ -39,8 +39,8 @@ try {
   echo "\n... finished retrieving dir instances.\n";
   
   # delete file from cdn
-  $rass->deleteDir($dir->entry->attrs->path);
-  echo "\nDeleted dir with path = " . $dir->entry->attrs->path . "\n";
+  $rass->deleteDir($dir->entry->content->params->path);
+  echo "\nDeleted dir with path = " . $dir->entry->content->params->path . "\n";
 
 }
 catch(Exception $e) {
