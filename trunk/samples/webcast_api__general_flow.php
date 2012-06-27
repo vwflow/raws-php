@@ -32,6 +32,9 @@ try {
   $metawc = new WebcastService(USER, PWD, "meta.meta03.rambla.be");
   $rass = new RassService(USER, PWD, "rass.cdn03.rambla.be");
   $meta = new MetaService(USER, PWD, "meta.meta03.rambla.be");
+  
+  # LIVE
+  # ----
 
   # create the webcast, letting the META service create the SMIL file and publish it on the CDN
   $content_name = null;
@@ -89,6 +92,10 @@ try {
     echo "\nRetrieved wslide entry with timestamp = " . $slide_entry->content->params->timestamp . " and URL = " . $slide_entry->content->params->url;
   }
   
+  
+  # ON-DEMAND
+  # ---------
+  
   # get all slides
   echo "\n\n-> getting ALL slides:";
   $wslides = $metawc->getWslideList($webcast->entry->content->params->id);
@@ -128,6 +135,19 @@ try {
   foreach ($wchannel->entry->content->webcast as $wc) {
     echo "\n- " . $wc->href;
   }
+  
+  
+  # CLEANUP
+  # -------
+  
+  # delete webcast instance
+  $metawc->deleteWebcast($webcast->entry->content->params->id, True);
+  echo "\nDeleted webcast with id: " . $webcast->entry->content->params->id . "\n";
+  
+  # delete wchannel instance
+  $metawc->deleteWchannel($wchannel->entry->content->params->id);
+  echo "\nDeleted wchannel with id: " . $wchannel->entry->content->params->id . "\n";
+  
   
 }
 catch(Exception $e) {
