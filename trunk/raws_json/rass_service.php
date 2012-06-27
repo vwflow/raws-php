@@ -68,27 +68,20 @@ class RassService
    * @param string $dirpath Relative path to the directory on the CDN in which the file needs to be stored.
    * @param string $filename Preferred name for the file to be created (if a file with the same name already exists at the given location, a suffix will be appended).
    * @param string $local_path Local path to the file that needs to be uploaded.
-   * @param bool $create_dirs Create the (sub)directories on the CDN if they don't exist.
+   * @param bool $create_dirs Not in use anymore, both POST and PUT requests will create necessary subdirs.
    * @return stdClass Corresponds to RASS item entry
    * @see https://wiki.rambla.be/RASS_item_resource#POST_request
    */
- 	function createItem($dirpath, $filename, $local_path, $create_dirs)
+ 	function createItem($dirpath, $filename, $local_path, $create_dirs = True)
 	{
 	  $uri = "/item/";
     $dirpath = ltrim($dirpath, "/");
 	  if ($dirpath) {
   	  $uri = $uri . rtrim($dirpath, "/") . "/";
 	  }
-#	  $uri = $uri . $filename . "/";
-	  
-	  $querystring = null;
-	  if ($create_dirs) {
-	    $querystring = "post=1";
-	  }
-	  
 	  $extra_headers = array('Slug: ' . $filename);
 
-    return $this->json_client->PUT($uri, $local_path, $querystring, $extra_headers);
+    return $this->json_client->PUT($uri, $local_path, null, $extra_headers);
 	}
 	
   /**

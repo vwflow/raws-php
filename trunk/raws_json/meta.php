@@ -253,6 +253,128 @@ class FileObj
   }
 }
 
+/**
+ * Class corresponding to a chapter, which may be part of a 'content' entry.
+ *
+ * @see https://wiki.rambla.be/META_content_resource
+ */
+class Chapter
+{
+  var $offset = "";
+  var $title = "";
+  var $description = "";
+	
+  /**
+   * Constructor.
+   *
+   * @see https://wiki.rambla.be/RAWS_meta_object
+   * @param string $offset Offset from the beginning of a video
+   * @param string $title Chapter title
+   * @param string $description Chapter description
+   */
+	function __construct($offset = null, $title = null, $description = null) 
+	{
+	  $this->clear();
+	  if ($offset) { 
+        $this->offset = $offset;
+    }
+    if ($title) {
+        $this->title = $title;
+    }
+    if ($description) {
+        $this->description = $description;
+    }
+	}
+	
+  /**
+   * Clears this object's data.
+   */
+	function clear()
+  {
+    $this->offset = "";
+    $this->title = "";
+    $this->description = "";
+  }
+
+  /**
+   * Store the object's datamembers in an array (that can serve as input for encoding the object into json)
+   *
+   * @return array Associative array (key, value are both strings).
+   */
+  function to_array() 
+  {
+    $d = array();
+    $d["offset"] = $this->offset;
+    $d["title"] = $this->title;
+    $d["description"] = $this->description;
+    return $d;
+  }
+}
+
+
+/**
+ * Class corresponding to a comment, which may be part of a 'content' entry.
+ *
+ * @see https://wiki.rambla.be/META_content_resource
+ */
+class Comment
+{
+  var $offset = "";
+  var $title = "";
+  var $description = "";
+  var $author = "";
+	
+  /**
+   * Constructor.
+   *
+   * @see https://wiki.rambla.be/RAWS_meta_object
+   * @param string $offset Offset from the beginning of a video
+   * @param string $title Comment title
+   * @param string $description Comment description
+   */
+	function __construct($offset = null, $title = null, $description = null, $author = null) 
+	{
+	  $this->clear();
+	  if ($offset) { 
+        $this->offset = $offset;
+    }
+    if ($title) {
+        $this->title = $title;
+    }
+    if ($description) {
+        $this->description = $description;
+    }
+    if ($author) {
+        $this->author = $author;
+    }
+	}
+	
+  /**
+   * Clears this object's data.
+   */
+	function clear()
+  {
+    $this->offset = "";
+    $this->title = "";
+    $this->description = "";
+    $this->author = "";
+  }
+
+  /**
+   * Store the object's datamembers in an array (that can serve as input for encoding the object into json)
+   *
+   * @return array Associative array (key, value are both strings).
+   */
+  function to_array() 
+  {
+    $d = array();
+    $d["offset"] = $this->offset;
+    $d["title"] = $this->title;
+    $d["description"] = $this->description;
+    $d["author"] = $this->author;
+    return $d;
+  }
+}
 
 /**
  * Class corresponding to a 'content' entry.
@@ -269,6 +391,8 @@ class MetaContent
   var $meta_objs;
   var $thumb_used;
   var $update_files;
+  var $chapters;
+  var $comments;
   
   /**
    * Constructor.
@@ -283,9 +407,11 @@ class MetaContent
    * @param string $thumb_used Relative path for the thumb to be used in playlists
    * @param int $update_files Set to 1 if you want to update the FileObj's that are linked to an existing content resource (requires all FileObjs to be set on this object)
    * @param string $yt_id Unique ID of the corresponding YouTube video (if any, otherwise empty string) 
+   * @param array $chapters Indexed array of Chapter objects
+   * @param array $comments Indexed array of Comment objects
    * @see https://wiki.rambla.be/META_content_resource#Content_object_details
    */
-  function __construct($name = null, $file_objs = null, $tags = null, $meta_objs = null, $thumb_used = null, $update_files = null, $yt_id = null)
+  function __construct($name = null, $file_objs = null, $tags = null, $meta_objs = null, $thumb_used = null, $update_files = null, $yt_id = null, $chapters = null, $comments = null)
   {
 	  $this->clear();
     if ($name) {
@@ -309,6 +435,12 @@ class MetaContent
     if ($yt_id) {
       $this->yt_id = $yt_id;
     }
+    if ($chapters) {
+      $this->chapters = $chapters;
+    }
+    if ($comments) {
+      $this->comments = $comments;
+    }
   }
 
   /**
@@ -327,6 +459,9 @@ class MetaContent
     # file_params
     $this->thumb_used = "";
     $this->update_files = 0;
+    # chapters & comments
+    $this->chapters = array();
+    $this->comments = array();
   }
   
   /**
@@ -348,6 +483,7 @@ class MetaContent
                       $frames = null, $framerate = null, $samplerate = null)
   {
     array_push($this->file_objs, new FileObj($path, $media_type, $size, $duration, $container, $bitrate, $width, $height, $frames, $framerate, $samplerate));
+    $this->update_files = 1;
   }
 
   /**
@@ -357,6 +493,7 @@ class MetaContent
    */
   function add_file_objs($file_objs) {
     array_merge($this->file_objs, $file_objs);
+    $this->update_files = 1;
   }
     
   /**
@@ -438,6 +575,80 @@ class MetaContent
   }
   
   /**
+   * Get an array of Chapter objects.
+   *
+   * @return array of Chapter objects
+   */
+  function get_chapters() {
+    return $this->chapters;
+  }
+
+  /**
+   * Add a single Chapter.
+   *
+   * @param Chapter $chapter
+   */
+  function add_chapter($offset, $title = null, $description = null) {
+    array_push($this->chapters, new Chapter($offset, $title, $description));
+  }
+
+  /**
+   * Add an array of Chapter objects.
+   *
+   * @param array $chapters Array of Chapter objects
+   */
+  function add_chapters($chapters) {
+    array_merge($this->chapters, $chapters);
+  }
+
+  /**
+   * Set all chapters (replaces existing ones).
+   *
+   * @param array $chapters Array of Chapter objects
+   */
+  function set_chapters($chapters) {
+    $this->chapters = $chapters;
+  }
+
+
+  /**
+   * Get an array of Comment objects.
+   *
+   * @return array of Comment objects
+   */
+  function get_comments() {
+    return $this->comments;
+  }
+
+  /**
+   * Add a single Comment.
+   *
+   * @param Comment $comment
+   */
+  function add_comment($offset, $title = null, $description = null) {
+    array_push($this->comments, new Comment($offset, $title, $description));
+  }
+
+  /**
+   * Add an array of Comment objects.
+   *
+   * @param array $comments Array of Comment objects
+   */
+  function add_comments($comments) {
+    array_merge($this->comments, $comments);
+  }
+
+  /**
+   * Set all comments (replaces existing ones).
+   *
+   * @param array $comments Array of Comment objects
+   */
+  function set_comments($comments) {
+    $this->comments = $comments;
+  }
+  
+  
+  /**
    * Fill up this object (will be cleared first) with data from an stdClass object (which is the result of json decoding a 'content' entry)
    *
    * @param stdClass Object corresponding to a 'content' entry (json decoded response from the META service).
@@ -479,6 +690,18 @@ class MetaContent
     foreach ($inner_entry->content->file as $f) {
       array_push($this->file_objs, new FileObj($f->path, $f->media_type, $f->size, $f->duration, $f->container, $f->bitrate, $f->width, $f->height, $f->frames, $f->framerate, $f->samplerate));
     }
+    # set chapters
+    if (property_exists($inner_entry->content, "chapter")) {
+      foreach ($inner_entry->content->chapter as $ch) {
+        array_push($this->chapters, new Chapter($ch->offset, $ch->title, $ch->description));
+      }
+    }
+    # set comments
+    if (property_exists($inner_entry->content, "comment")) {
+      foreach ($inner_entry->content->comment as $ch) {
+        array_push($this->comments, new Comment($ch->offset, $ch->title, $ch->description));
+      }
+    }
   }
 
   /**
@@ -509,6 +732,16 @@ class MetaContent
     $entry["entry"]["content"]["file_params"] = array();
     $entry["entry"]["content"]["file_params"]["thumb_used"] = $this->thumb_used;
     $entry["entry"]["content"]["file_params"]["update_files"] = $this->update_files;
+    # set chapters
+    $entry["entry"]["content"]["chapter"] = array();
+    foreach ($this->chapters as $ch) {
+      array_push($entry["entry"]["content"]["chapter"], $ch->to_array());
+    }
+    # set comments
+    $entry["entry"]["content"]["comment"] = array();
+    foreach ($this->comments as $ch) {
+      array_push($entry["entry"]["content"]["comment"], $ch->to_array());
+    }
 
     return $entry;
   }
