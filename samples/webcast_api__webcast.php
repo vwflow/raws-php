@@ -59,7 +59,7 @@ try {
   echo "\n... finished retrieving webcast instances.\n";
   
   # delete webcast instance
-  $meta->deleteWebcast($webcast->entry->content->params->id, False);
+  $meta->deleteWebcast($webcast->entry->content->params->id, True);
   echo "\nDeleted webcast with id: " . $webcast->entry->content->params->id . "\n";
   
   # delete wchannel instance
