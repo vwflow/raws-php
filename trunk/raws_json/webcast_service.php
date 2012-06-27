@@ -1,5 +1,6 @@
 <?php
 # Copyright (C) 2012 rambla.eu
+# DISCLAIMER: This functionality has not yet been released, this script is for development purposes only !
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
