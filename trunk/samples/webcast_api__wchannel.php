@@ -27,7 +27,7 @@ try {
   $meta = new WebcastService(USER, PWD, "meta.meta03.rambla.be");
 
   # create wchannel
-  $wchannel = $meta->createWchannel("myywchannel", "Description of myywchannel", "1");
+  $wchannel = $meta->createWchannel("myywchannel", "Description of myywchannel");
   echo "\nCreated wchannel: " . $wchannel->entry->id . "\n";
 
   # get wchannel instance
@@ -36,8 +36,6 @@ try {
   
   # update wchannel instance
   $wchannel->entry->content->params->description = "My updated wchannel"; # update description
-  $wchannel->entry->content->action = new stdClass;
-  $wchannel->entry->content->action->update_webcast = True;
   $webcast = $meta->createWebcast(1004, "mywebcast", "Hello Webcast", "See http://myywebcast.org/", "monty", "mystream");
   $wchannel->entry->content->webcast = array();
   $wc = new stdClass;
