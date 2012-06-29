@@ -225,14 +225,10 @@ class WebcastService
     $v["entry"]["content"]["params"]["title"] = $title;
     $v["entry"]["content"]["params"]["description"] = $description;
     if ($webcast_id) {
-      $v["entry"]["content"]["action"] = array();
-      $v["entry"]["content"]["action"]["update_webcast"] = True;
       $v["entry"]["content"]["webcast"] = array();
       $v["entry"]["content"]["webcast"][] = array("id" => $webcast_id);
     }
     elseif($webcasts) {
-      $v["entry"]["content"]["action"] = array();
-      $v["entry"]["content"]["action"]["update_webcast"] = True;
       $v["entry"]["content"]["webcast"] = $webcasts;
     }
     
@@ -358,6 +354,7 @@ class WebcastService
   /**
    * Get a list of wslide objects.
    *
+   * @param string $webcast_id Webcast identifier
    * @param string $querystr Query-string to be added to request
    * @return stdClass Object corresponding to a wslide feed.
    * @see https://wiki.rambla.be/META_wslide_resource#GET
@@ -367,6 +364,26 @@ class WebcastService
     $uri = "/wslide/" . $this->username . "/" . $webcast_id . "/";
     return $this->json_client->GET($uri, $querystr);
   }
+
+
+  /**
+   * Deletes all Wslide instances linked to a given webcast.
+   *
+   * @param string $webcast_id Webcast identifier
+   * @param string $querystr Query-string to be added to request
+   * @return stdClass Object corresponding to a wslide feed.
+   * @see https://wiki.rambla.be/META_wslide_resource#GET
+   */
+  function deleteWslideList($webcast_id, $delete_from_cdn = True)
+  {
+    $querystr = "delete_from_cdn=1";
+    if (! $delete_from_cdn) {
+      $querystr = "delete_from_cdn=0";
+    }
+    $uri = "/wslide/" . $this->username . "/" . $webcast_id . "/";
+    return $this->json_client->DELETE($uri, $querystr);
+  }
+
 
   /**
    * Delete a wslide instance.
