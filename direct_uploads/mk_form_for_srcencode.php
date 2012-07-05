@@ -37,6 +37,14 @@ $snapshot_interval = "25";                      # take snapshot after every 25% 
 $proc_id = "13";                                # email CDN report in JSON format
 $client_passthru = "some client specific data"; # client-specific data that can be retrieved later (via GET job or CDN report notification)
 
+## Note: currently $client_passthru must be a string, which may not invalidate the JSON data object inside raws_info
+## In order to transfer a JSON object inside $client_passthru, you should do the following:
+$arr = array("a" => 1, 'b' => 2);
+$client_passthru = json_encode($arr);
+$client_passthru = addcslashes($client_passthru, '"');
+$client_passthru = htmlspecialchars($client_passthru);
+## See also https://rampubwiki.wiki.rambla.be/RATS_srcencode_resource#Note:_sending_a_json_object_inside_client_passthru
+
 $html = <<<EOT
   <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
   <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
