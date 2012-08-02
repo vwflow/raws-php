@@ -29,12 +29,10 @@ try {
   $wchannel = $meta->createWchannel("channel09", "Description of channel09");
 
   # create webcast with custom smil and wchannel linked
-  $smil_streams = array();
-  $smil_streams[] = array("name" => "mystream_lq", "bitrate" => 200000);
-  $smil_streams[] = array("name" => "mystream_hq", "bitrate" => 800000);
+  $smil_streams = array("240p", "360p", "720p");
   $wchannels = array();
   $wchannels[] = array("id" => $wchannel->entry->content->params->id, "ranking" => 9);
-  $webcast = $meta->createWebcast("99", "webcast99", "Hello Webcast 99", "See http://myywebcast99.org/", "monty", "mystream99", $smil_streams, $wchannels);
+  $webcast = $meta->createWebcast("99", "webcast99", "Hello Webcast 99", "See http://myywebcast99.org/", "monty", True, $smil_streams, $wchannels);
   echo "\nCreated webcast: " . $webcast->entry->id . "\n";
     
   # get webcast instance

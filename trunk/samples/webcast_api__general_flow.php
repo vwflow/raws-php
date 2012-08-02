@@ -38,7 +38,7 @@ try {
 
   # create the webcast, letting the META service create the SMIL file and publish it on the CDN
   $content_name = null;
-  $webcast = $metawc->createWebcast(1, "webcast_1", "Hello Webcast 1", "http://myywebcast1.org/", "bruno", "mystream");
+  $webcast = $metawc->createWebcast(1, "webcast_1", "Hello Webcast 1", "http://myywebcast1.org/", "bruno");
   echo "\nCreated webcast: " . $webcast->entry->id . " attached to content instance with name: ";
   foreach($webcast->entry->content->content as $c) {
     $content_name = $c->name;

@@ -36,7 +36,7 @@ try {
   
   # update wchannel instance
   $wchannel->entry->content->params->description = "My updated wchannel"; # update description
-  $webcast = $meta->createWebcast(1004, "mywebcast", "Hello Webcast", "See http://myywebcast.org/", "monty", "mystream");
+  $webcast = $meta->createWebcast(1004, "mywebcast", "Hello Webcast", "See http://myywebcast.org/", "monty");
   $wchannel->entry->content->webcast = array();
   $wc = new stdClass;
   $wc->id = $webcast->entry->content->params->id;
