@@ -206,18 +206,25 @@ class RassService
   /**
    * Delete a directory using RASS.
    *
+   * By default, the directory will only be deleted if it is empty.
+   * To change this behaviour, pass True in the recursive argument.
+   * 
    * This method doesn't return a value. When the DELETE request didn't succeed, an exception is raised.
    *
    * @param string $path Relative path to the file on the CDN.
    * @param bool $recursive Delete dir recursively (if False, the DELETE request will fail if files and/or sub-directories exist inside of it).
+   * @param bool $files_only Only delete all files located in the directory, not the directory itself of its sub-directories.
    * @see https://wiki.rambla.be/RASS_dir_resource#DELETE_request
    */
-  function deleteDir($path, $recursive = False)
+  function deleteDir($path, $recursive = False, $files_only = False)
   {
 	  $uri = "dir/" . ltrim($path, "/");
 	  $querystr = null;
 	  if ($recursive) {
   	  $querystr = "recursive=1";
+	  }
+	  elseif ($files_only) {
+  	  $querystr = "files_only=1";
 	  }
     return $this->json_client->DELETE($uri, $querystr);
   }
