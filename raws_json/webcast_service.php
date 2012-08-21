@@ -200,6 +200,38 @@ class WebcastService
     return $exists;
   }
   
+  /**
+   * Sets the record_start of the webcast.
+   *
+   * @param stdClass $webcast Existing webcast instance.
+   * @param int $timestamp UNIX timestamp to be set in the webcast's record_start param (if null, the current time is used).
+   * @return stdClass $webcast Updated webcast instance.
+   */
+  function webcastSetRecordStart($webcast, $timestamp = null) 
+  {
+    if (!$timestamp) {
+      $timestamp = time();
+    }
+    $webcast->entry->content->params->record_start = (string)$timestamp;
+    return $this->updateWebcast($webcast);
+  }
+
+  /**
+   * Sets the record_end of the webcast.
+   *
+   * @param stdClass $webcast Existing webcast instance.
+   * @param int $timestamp UNIX timestamp to be set in the webcast's record_end param (if null, the current time is used).
+   * @return stdClass $webcast Updated webcast instance.
+   */
+  function webcastSetRecordEnd($webcast, $timestamp = null) 
+  {
+    if (!$timestamp) {
+      $timestamp = time();
+    }
+    $webcast->entry->content->params->record_end = (string)$timestamp;
+    return $this->updateWebcast($webcast);
+  }
+  
   # Wchannel Methods
   # -------------
 

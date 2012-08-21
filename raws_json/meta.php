@@ -323,6 +323,8 @@ class Comment
   var $title = "";
   var $description = "";
   var $author = "";
+  var $type = "";
+  var $updated = "";
 	
   /**
    * Constructor.
@@ -332,7 +334,7 @@ class Comment
    * @param string $title Comment title
    * @param string $description Comment description
    */
-	function __construct($offset = null, $title = null, $description = null, $author = null) 
+	function __construct($offset = null, $title = null, $description = null, $author = null, $type = null, $updated = null) 
 	{
 	  $this->clear();
 	  if ($offset) { 
@@ -347,6 +349,12 @@ class Comment
     if ($author) {
         $this->author = $author;
     }
+    if ($type) {
+        $this->type = $type;
+    }
+    if ($updated) {
+        $this->updated = $updated;
+    }
 	}
 	
   /**
@@ -358,6 +366,8 @@ class Comment
     $this->title = "";
     $this->description = "";
     $this->author = "";
+    $this->type = "";
+    $this->updated = "";
   }
 
   /**
@@ -372,6 +382,8 @@ class Comment
     $d["title"] = $this->title;
     $d["description"] = $this->description;
     $d["author"] = $this->author;
+    $d["type"] = $this->type;
+    $d["updated"] = $this->updated;
     return $d;
   }
 }
@@ -626,7 +638,7 @@ class MetaContent
    * @param Comment $comment
    */
   function add_comment($offset, $title = null, $description = null, $author = null) {
-    array_push($this->comments, new Comment($offset, $title, $description, $author));
+    array_push($this->comments, new Comment($offset, $title, $description, $author, $type, $updated));
   }
 
   /**
@@ -699,7 +711,7 @@ class MetaContent
     # set comments
     if (property_exists($inner_entry->content, "comment")) {
       foreach ($inner_entry->content->comment as $ch) {
-        array_push($this->comments, new Comment($ch->offset, $ch->title, $ch->description));
+        array_push($this->comments, new Comment($ch->offset, $ch->title, $ch->description, $ch->author, $ch->type, $ch->updated));
       }
     }
   }
