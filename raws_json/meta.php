@@ -637,7 +637,7 @@ class MetaContent
    *
    * @param Comment $comment
    */
-  function add_comment($offset, $title = null, $description = null, $author = null) {
+  function add_comment($offset, $title = null, $description = null, $author = null, $type = null, $updated = null) {
     array_push($this->comments, new Comment($offset, $title, $description, $author, $type, $updated));
   }
 
