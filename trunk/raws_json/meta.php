@@ -325,6 +325,7 @@ class Comment
   var $author = "";
   var $type = "";
   var $updated = "";
+  var $published = "";
 	
   /**
    * Constructor.
@@ -334,7 +335,7 @@ class Comment
    * @param string $title Comment title
    * @param string $description Comment description
    */
-	function __construct($offset = null, $title = null, $description = null, $author = null, $type = null, $updated = null) 
+	function __construct($offset = null, $title = null, $description = null, $author = null, $type = null, $updated = null, $published = null) 
 	{
 	  $this->clear();
 	  if ($offset) { 
@@ -355,6 +356,9 @@ class Comment
     if ($updated) {
         $this->updated = $updated;
     }
+    if ($published) {
+        $this->published = $published;
+    }
 	}
 	
   /**
@@ -368,6 +372,7 @@ class Comment
     $this->author = "";
     $this->type = "";
     $this->updated = "";
+    $this->published = "";
   }
 
   /**
@@ -384,6 +389,7 @@ class Comment
     $d["author"] = $this->author;
     $d["type"] = $this->type;
     $d["updated"] = $this->updated;
+    $d["published"] = $this->published;
     return $d;
   }
 }
@@ -637,8 +643,8 @@ class MetaContent
    *
    * @param Comment $comment
    */
-  function add_comment($offset, $title = null, $description = null, $author = null, $type = null, $updated = null) {
-    array_push($this->comments, new Comment($offset, $title, $description, $author, $type, $updated));
+  function add_comment($offset, $title = null, $description = null, $author = null, $type = null, $updated = null, $published = null) {
+    array_push($this->comments, new Comment($offset, $title, $description, $author, $type, $updated, $published));
   }
 
   /**
@@ -711,7 +717,7 @@ class MetaContent
     # set comments
     if (property_exists($inner_entry->content, "comment")) {
       foreach ($inner_entry->content->comment as $ch) {
-        array_push($this->comments, new Comment($ch->offset, $ch->title, $ch->description, $ch->author, $ch->type, $ch->updated));
+        array_push($this->comments, new Comment($ch->offset, $ch->title, $ch->description, $ch->author, $ch->type, $ch->updated, $ch->published));
       }
     }
   }
