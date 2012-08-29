@@ -79,7 +79,7 @@ class WebcastService
    * @return stdClass Object corresponding to the webcast instance that has been created.
    * @see https://wiki.rambla.be/META_webcast_resource#POST
    */
-	function createWebcast($id, $content_name, $title = null, $description = null, $owner = null, $create_smil = True, $streams = null, $wchannels = null)
+	function createWebcast($id, $content_name, $title = null, $description = null, $owner = null, $create_smil = True, $streams = null, $wchannels = null, $speaker = null, $agenda = null, $date = null)
 	{
 	  $v = array();
     $v["entry"] = array();
@@ -89,6 +89,9 @@ class WebcastService
     if ($title) { $v["entry"]["content"]["params"]["title"] = $title;}
     if ($description) { $v["entry"]["content"]["params"]["description"] = $description;}
     if ($owner) { $v["entry"]["content"]["params"]["owner"] = $owner;}
+    if ($speaker) { $v["entry"]["content"]["params"]["speaker"] = $speaker;}
+    if ($agenda) { $v["entry"]["content"]["params"]["agenda"] = $agenda;}
+    if ($date) { $v["entry"]["content"]["params"]["date"] = $date;}
     $v["entry"]["content"]["content"] = array();
     $v["entry"]["content"]["content"][] = array("name" => $content_name);
     $v["entry"]["content"]["action"] = array();
