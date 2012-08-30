@@ -69,10 +69,11 @@ class RassService
    * @param string $filename Preferred name for the file to be created (if a file with the same name already exists at the given location, a suffix will be appended).
    * @param string $local_path Local path to the file that needs to be uploaded.
    * @param bool $create_dirs Not in use anymore, both POST and PUT requests will create necessary subdirs.
+   * @param array $custom_headers Add additional headers to request (e.g. $custom_headers = array('X-Progress-ID: ' . $progress_id).
    * @return stdClass Corresponds to RASS item entry
    * @see https://wiki.rambla.be/RASS_item_resource#POST_request
    */
- 	function createItem($dirpath, $filename, $local_path, $create_dirs = True)
+ 	function createItem($dirpath, $filename, $local_path, $create_dirs = True, $custom_headers = null)
 	{
 	  $uri = "/item/";
     $dirpath = ltrim($dirpath, "/");
@@ -80,6 +81,9 @@ class RassService
   	  $uri = $uri . rtrim($dirpath, "/") . "/";
 	  }
 	  $extra_headers = array('Slug: ' . $filename);
+	  if ($custom_headers) {
+	    $extra_headers = array_merge($extra_headers, $custom_headers);
+	  }
 
     return $this->json_client->PUT($uri, $local_path, null, $extra_headers);
 	}
