@@ -68,45 +68,35 @@ class WebcastService
    *
    * Throws a RawsRequestException if the instance could not be created.
    *
-   * @param string $id Webcast id (numerical, must be unique).
-   * @param string $content_name Name of an existing content instance (if 'create_smil' action is not set), or proposed name for the content instance that will be created.
+   * @param string $status Should be 'pre-live', 'empty', 'live', 'vod' or 'vod-local'.
    * @param string $title Webcast title.
    * @param string $description Webcast description.
    * @param string $owner Webcast owner name.
-   * @param string $stream_name Base name for the stream (smil file), implicitly sets 'create_smil' action.
-   * @param array $streamsArray of stream objects for 'create_smil' action (= optional).
+   * @param array $resolutions Array of resolutions, allowed values are: "240p", "360p", "480p", "720p".
    * @param array $wchannels Channel(s) to which this webcast belong(s). Each channel should be an associative array with (at least) an "id" element.
+   * @param string $speaker Speaker info
+   * @param string $agenda Webcast agenda
+   * @param string $date UNIX timestamp.
    * @return stdClass Object corresponding to the webcast instance that has been created.
    * @see https://wiki.rambla.be/META_webcast_resource#POST
    */
-	function createWebcast($id, $content_name, $title = null, $description = null, $owner = null, $create_smil = True, $streams = null, $wchannels = null, $speaker = null, $agenda = null, $date = null)
+	function createWebcast($status, $title = null, $description = null, $owner = null, $resolutions = null, $wchannels = null, $speaker = null, $agenda = null, $date = null)
 	{
 	  $v = array();
     $v["entry"] = array();
     $v["entry"]["content"] = array();
     $v["entry"]["content"]["params"] = array();
-    $v["entry"]["content"]["params"]["id"] = $id;
+    $v["entry"]["content"]["params"]["status"] = $status;
     if ($title) { $v["entry"]["content"]["params"]["title"] = $title;}
     if ($description) { $v["entry"]["content"]["params"]["description"] = $description;}
     if ($owner) { $v["entry"]["content"]["params"]["owner"] = $owner;}
     if ($speaker) { $v["entry"]["content"]["params"]["speaker"] = $speaker;}
     if ($agenda) { $v["entry"]["content"]["params"]["agenda"] = $agenda;}
     if ($date) { $v["entry"]["content"]["params"]["date"] = $date;}
-    $v["entry"]["content"]["content"] = array();
-    $v["entry"]["content"]["content"][] = array("name" => $content_name);
-    $v["entry"]["content"]["action"] = array();
-
-    if ($create_smil) {
-      $v["entry"]["content"]["action"]["create_smil"] = "1";
-      $v["entry"]["content"]["smil"] = array();
-      if ($streams) {
-        $v["entry"]["content"]["smil"]["streams"] = $streams;
-      }
+    if ($resolutions) { 
+      $v["entry"]["content"]["params"]["resolutions"] = array();
+      $v["entry"]["content"]["params"]["resolutions"] = $resolutions;
     }
-    else {
-      $v["entry"]["content"]["action"]["update_content"] = "1";
-    }
-
     if($wchannels) {
       $v["entry"]["content"]["action"]["update_wchannel"] = "1";
       $v["entry"]["content"]["wchannel"] = $wchannels;
