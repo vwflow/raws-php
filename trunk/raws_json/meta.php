@@ -513,6 +513,17 @@ class MetaContent
     array_merge($this->file_objs, $file_objs);
     $this->update_files = 1;
   }
+  
+  /**
+   * Set an array of FileObj objects.
+   *
+   * @param array $meta_objs Array of FileObj objects
+   */
+  function set_file_objs($file_objs) {
+    $this->file_objs = $file_objs;
+    $this->update_files = 1;
+  }
+  
     
   /**
    * Get an array of MetaObj objects.
