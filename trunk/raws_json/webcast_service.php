@@ -225,6 +225,23 @@ class WebcastService
     return $this->updateWebcast($webcast);
   }
   
+  function trimWebcast($id, $last_trimmed, $trim_timestamp, $trim_start_secs, $trim_end_secs, $path, $resolution) 
+  {
+    $a = array();
+    $a["webcast_id"] = $id;
+    $a["last_trimmed"] = $last_trimmed;
+    $a["trim_timestamp"] = $trim_timestamp;
+    $a["trim_start_secs"] = $trim_start_secs;
+    $a["trim_end_secs"] = $trim_end_secs;
+    $a["path"] = $path;
+    $a["resolution"] = $resolution;
+
+    $uri = "/webcast/trim/" . $this->username . "/" . $id . "/";
+	  
+    return $this->json_client->POST($uri, $a);
+  }
+  
+  
   # Wchannel Methods
   # -------------
 
