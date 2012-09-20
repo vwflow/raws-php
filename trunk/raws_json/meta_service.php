@@ -325,5 +325,102 @@ class MetaService
     return $this->json_client->GET($uri, $querystr, False);
 	}
   
+  
+  /**
+   * Get a single comment instance.
+   *
+   * @param string $id ID that uniquely identifies the comment instance.
+   * @return stdClass Object corresponding to a comment entry.
+   * @see https://wiki.rambla.be/META_comment_resource#GET
+   */
+	function getCommentInstance($id)
+	{
+    $uri = "/comment/"  . $this->username . "/" . $id . "/";
+    return $this->json_client->GET($uri);
+	}
+	
+  /**
+   * Delete a comment instance.
+   *
+   * Throws a RawsRequestException if the instance could not be deleted.
+   *
+   * @param string $id Slide id.
+   * @see https://wiki.rambla.be/META_comment_resource#DELETE
+   */
+  function deleteComment($id)
+  {
+    $uri = "/comment/"  . $this->username . "/" . $id . "/";
+    return $this->json_client->DELETE($uri);
+  }
+  
+  /**
+   * Update an existing comment instance.
+   *
+   * @param array $params Params for this comment entry
+   * @return stdClass Object corresponding to the comment instance that has been created.
+   * @see https://wiki.rambla.be/META_comment_resource#POST
+   */
+  function updateComment($params)
+  {
+    if (! $params["id"]) {
+      throw new Exception("updateComment() : params argument must contain the comment id");
+    }
+    $v = array();
+    $v["entry"] = array();
+    $v["entry"]["content"] = array();
+    $v["entry"]["content"]["params"] = $params;
+    
+    $uri = "/comment/"  . $this->username . "/" . $params["id"] . "/";
+    return $this->json_client->POST($uri, $v);
+  }
+	
+  
+  /**
+   * Get a single chapter instance.
+   *
+   * @param string $id ID that uniquely identifies the chapter instance.
+   * @return stdClass Object corresponding to a chapter entry.
+   * @see https://wiki.rambla.be/META_chapter_resource#GET
+   */
+	function getChapterInstance($id)
+	{
+    $uri = "/chapter/"  . $this->username . "/" . $id . "/";
+    return $this->json_client->GET($uri);
+	}
+	
+  /**
+   * Delete a chapter instance.
+   *
+   * Throws a RawsRequestException if the instance could not be deleted.
+   *
+   * @param string $id Slide id.
+   * @see https://wiki.rambla.be/META_chapter_resource#DELETE
+   */
+  function deleteChapter($id)
+  {
+    $uri = "/chapter/"  . $this->username . "/" . $id . "/";
+    return $this->json_client->DELETE($uri);
+  }
+  
+  /**
+   * Update an existing chapter instance.
+   *
+   * @param array $params Params for this chapter entry
+   * @return stdClass Object corresponding to the chapter instance that has been created.
+   * @see https://wiki.rambla.be/META_chapter_resource#POST
+   */
+  function updateChapter($params)
+  {
+    if (! $params["id"]) {
+      throw new Exception("updateChapter() : params argument must contain the chapter id");
+    }
+    $v = array();
+    $v["entry"] = array();
+    $v["entry"]["content"] = array();
+    $v["entry"]["content"]["params"] = $params;
+    
+    $uri = "/chapter/"  . $this->username . "/" . $params["id"] . "/";
+    return $this->json_client->POST($uri, $v);
+  }
 
 }

@@ -48,16 +48,16 @@ class MetaObj
 	function __construct($meta_name = null, $vocab = null, $text = null, $lang = null, $attrs = null) 
 	{
 	  $this->clear();
-	  if ($vocab) { 
+	  if ($vocab !== '') { 
         $this->vocab = $vocab;
     }
-    if ($meta_name) {
+    if ($meta_name !== '') {
         $this->meta_name = $meta_name;
     }
-    if ($text) {
+    if ($text !== '') {
         $this->text = $text;
     }
-    if ($lang) {
+    if ($lang !== '') {
         $this->lang = $lang;
     }
     if ($attrs) {
@@ -170,34 +170,34 @@ class FileObj
 	  if ($path) { 
       $this->set_path($path);
     }
-    if ($media_type) {
+    if ($media_type !== '') {
       $this->media_type = $media_type;
     }
-    if ($duration) {
+    if (! is_null($duration)) {
       $this->duration = $duration;
     }
-    if ($size) {
+    if (! is_null($size)) {
       $this->size = $size;
     }
-    if ($container) {
+    if ($container !== '') {
       $this->container = $container;
     }
-    if ($bitrate) {
+    if (! is_null($bitrate)) {
       $this->bitrate = $bitrate;
     }
-    if ($width) {
+    if (! is_null($width)) {
       $this->width = $width;
     }
-    if ($height) {
+    if (! is_null($height)) {
       $this->height = $height;
     }
-    if ($frames) {
+    if (! is_null($frames)) {
       $this->frames = $frames;
     }
-    if ($framerate) {
+    if (! is_null($framerate)) {
       $this->framerate = $framerate;
     }
-    if ($samplerate) {
+    if (! is_null($samplerate)) {
       $this->samplerate = $samplerate;
     }
   }
@@ -260,6 +260,7 @@ class FileObj
  */
 class Chapter
 {
+  var $id = "";
   var $offset = "";
   var $title = "";
   var $description = "";
@@ -272,16 +273,19 @@ class Chapter
    * @param string $title Chapter title
    * @param string $description Chapter description
    */
-	function __construct($offset = null, $title = null, $description = null) 
+	function __construct($offset = null, $title = null, $description = null, $id = null) 
 	{
 	  $this->clear();
-	  if ($offset) { 
+    if (! is_null($id)) {
+        $this->id = $id;
+    }
+    if (! is_null($offset)) {
         $this->offset = $offset;
     }
-    if ($title) {
+    if ($title !== '') {
         $this->title = $title;
     }
-    if ($description) {
+    if ($description !== '') {
         $this->description = $description;
     }
 	}
@@ -291,6 +295,7 @@ class Chapter
    */
 	function clear()
   {
+    $this->id = "";
     $this->offset = "";
     $this->title = "";
     $this->description = "";
@@ -304,6 +309,7 @@ class Chapter
   function to_array() 
   {
     $d = array();
+    $d["id"] = $this->id;
     $d["offset"] = $this->offset;
     $d["title"] = $this->title;
     $d["description"] = $this->description;
@@ -319,6 +325,7 @@ class Chapter
  */
 class Comment
 {
+  var $id = "";
   var $offset = "";
   var $title = "";
   var $description = "";
@@ -335,29 +342,32 @@ class Comment
    * @param string $title Comment title
    * @param string $description Comment description
    */
-	function __construct($offset = null, $title = null, $description = null, $author = null, $type = null, $updated = null, $published = null) 
+	function __construct($offset = null, $title = null, $description = null, $author = null, $type = null, $updated = null, $published = null, $id = null) 
 	{
 	  $this->clear();
-	  if ($offset) { 
+	  if (! is_null($offset)) { 
         $this->offset = $offset;
     }
-    if ($title) {
+    if ($title !== '') {
         $this->title = $title;
     }
-    if ($description) {
+    if ($description !== '') {
         $this->description = $description;
     }
-    if ($author) {
+    if ($author !== '') {
         $this->author = $author;
     }
-    if ($type) {
+    if ($type !== '') {
         $this->type = $type;
     }
-    if ($updated) {
+    if (! is_null($updated)) {
         $this->updated = $updated;
     }
-    if ($published) {
+    if (! is_null($published)) {
         $this->published = $published;
+    }
+    if (! is_null($id)) {
+        $this->id = $id;
     }
 	}
 	
@@ -366,6 +376,7 @@ class Comment
    */
 	function clear()
   {
+    $this->id = "";
     $this->offset = "";
     $this->title = "";
     $this->description = "";
@@ -383,6 +394,7 @@ class Comment
   function to_array() 
   {
     $d = array();
+    $d["id"] = $this->id;
     $d["offset"] = $this->offset;
     $d["title"] = $this->title;
     $d["description"] = $this->description;
@@ -432,7 +444,7 @@ class MetaContent
   function __construct($name = null, $file_objs = null, $tags = null, $meta_objs = null, $thumb_used = null, $update_files = null, $yt_id = null, $chapters = null, $comments = null)
   {
 	  $this->clear();
-    if ($name) {
+    if ($name !== '') {
       $this->name = $name;
     }
     if ($file_objs) {
@@ -444,13 +456,13 @@ class MetaContent
     if ($meta_objs) {
       $this->meta_objs = $meta_objs;
     }
-	  if ($thumb_used) { 
+	  if ($thumb_used !== '') { 
       $this->set_thumb_used($thumb_used);
     }
-    if ($update_files) {
+    if (! is_null($update_files)) {
       $this->update_files = $update_files;
     }
-    if ($yt_id) {
+    if (! is_null($yt_id)) {
       $this->yt_id = $yt_id;
     }
     if ($chapters) {
@@ -722,13 +734,13 @@ class MetaContent
     # set chapters
     if (property_exists($inner_entry->content, "chapter")) {
       foreach ($inner_entry->content->chapter as $ch) {
-        array_push($this->chapters, new Chapter($ch->offset, $ch->title, $ch->description));
+        array_push($this->chapters, new Chapter($ch->offset, $ch->title, $ch->description, $ch->id));
       }
     }
     # set comments
     if (property_exists($inner_entry->content, "comment")) {
       foreach ($inner_entry->content->comment as $ch) {
-        array_push($this->comments, new Comment($ch->offset, $ch->title, $ch->description, $ch->author, $ch->type, $ch->updated, $ch->published));
+        array_push($this->comments, new Comment($ch->offset, $ch->title, $ch->description, $ch->author, $ch->type, $ch->updated, $ch->published, $ch->id));
       }
     }
   }
