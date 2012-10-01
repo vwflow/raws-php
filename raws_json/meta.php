@@ -612,7 +612,12 @@ class MetaContent
   
   function set_thumb_used($thumb_used) 
   {
-    $this->thumb_used = "/" . trim($thumb_used, "/");
+    if ($thumb_used) {
+      $this->thumb_used = "/" . trim($thumb_used, "/");
+    }
+    else {
+      $this->thumb_used = "";
+    }
   }
   
   /**

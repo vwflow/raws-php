@@ -261,8 +261,8 @@ class RawsJsonClient
        }
        break;
      case 'POST':
-#       echo "\nPOSTING DATA:";
-#       print_r($data);
+#      echo "\nPOSTING DATA:";
+#      print_r($data);
        if ($filepath) { # POST can also be used to upload a file (however it can not do streaming uploads)
          $data = file_get_contents($filepath);
          $headers[] = 'Content-Length: ' . filesize($filepath);
@@ -297,7 +297,7 @@ class RawsJsonClient
    $code = curl_getinfo($curl_handle, CURLINFO_HTTP_CODE);
    curl_close($curl_handle);
   # echo "\n Response code: " . $code;
-  # echo "\n Response: " . $response;
+  // echo "\n Response: " . $response;
 
    if ($code >= 300) {
      throw new RawsRequestException($response, $code);
