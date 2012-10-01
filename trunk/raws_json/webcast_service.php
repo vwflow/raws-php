@@ -397,6 +397,30 @@ class WebcastService
   }
 
   /**
+   * Create a new wslide instance.
+   *
+   * Throws a RawsRequestException if the instance could not be created.
+   *
+   * @param string $webcast_id Webcast ID
+   * @param string $path Relative path to the slide img.
+   * @param string $timestamp Time the slide was taken
+   * @param array $offset Offset from the beginning of the webcast.
+   * @return stdClass Object corresponding to the wslide instance that has been created.
+   * @see https://wiki.rambla.be/META_wslide_resource#POST
+   */
+  function createWslideTmp($webcast_id, $path)
+  {
+    $v = array();
+    $v["entry"] = array();
+    $v["entry"]["content"] = array();
+    $v["entry"]["content"]["params"] = array();
+    $v["entry"]["content"]["params"]["webcast_id"] = $webcast_id;
+    $v["entry"]["content"]["params"]["path"] = $path;
+
+    $uri = "/wslide/tmp/" . $this->username . "/" . $webcast_id . "/";
+    return $this->json_client->POST($uri, $v);
+  }
+  /**
    * Get a list of wslide objects.
    *
    * @param string $webcast_id Webcast identifier

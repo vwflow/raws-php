@@ -700,6 +700,156 @@ class RatsService
     return $this->json_client->DELETE($uri);
 	}
  	
+ 	## FORMATGROUP
+ 	## -----------
+ 	
+ 	/**
+    * Get a list of formatgroup instances.
+    *
+    * @param string $querystr Querystring to be used when calling GET formatgroup.
+    * @return stdClass Corresponds to RATS formatgroup feed
+    */
+ 	function getFormatgroupList($querystr = null)
+	{
+	  $uri = "/formatgroup/";
+    return $this->json_client->GET($uri, $querystr);
+	}
+	
+	/**
+   * Get a single formatgroup instance.
+   *
+   * @param string $id ID that uniquely identifies the formatgroup instance.
+   * @return stdClass Object corresponding to a formatgroup entry.
+   * @see https://wiki.rambla.be/RATS_formatgroup_resource
+   */
+	function getFormatgroupInstance($id)
+	{
+	  $uri = "/formatgroup/" . $id;
+    return $this->json_client->GET($uri);
+	}
+  
+	/**
+   * Create a new formatgroup instance.
+   *
+   * Throws a RawsRequestException if the instance could not be created.
+   *
+   * @param array $a_params Associative array of formatgroup params.
+   * @return stdClass Object corresponding to a formatgroup entry.
+   * @see https://wiki.rambla.be/RATS_formatgroup_resource
+   */
+	function createFormatgroup($a_params)
+	{
+	  $e = array();
+    $e["entry"] = array();
+    $e["entry"]["content"] = array();
+    $e["entry"]["content"]["params"] = $a_params;
+    return $this->json_client->POST("/formatgroup/", $e);
+	}
+	
+	/**
+   * Update an existing formatgroup instance.
+   *
+   * Throws a RawsRequestException if the instance could not be updated.
+   *
+   * @param stdClass $formatgroup Corresponds to a RATS formatgroup entry
+   * @return stdClass Corresponds to RATS formatgroup entry
+   * @see https://wiki.rambla.be/RATS_formatgroup_resource
+   */
+ 	function updateFormatgroup($formatgroup)
+	{
+    return $this->json_client->POST($formatgroup->entry->id, $formatgroup);
+	}
+	
+	/**
+   * Delete formatgroup instance.
+   *
+   * Throws a RawsRequestException if the instance could not be deleted.
+   *
+   * @param string $id ID that uniquely identifies the formatgroup instance.
+   * @see https://wiki.rambla.be/RATS_formatgroup_resource#DELETE
+   */
+	function deleteFormatgroup($id)
+	{
+	  $uri = "/formatgroup/" . $id;
+    return $this->json_client->DELETE($uri);
+	}
+  
+ 	## PROC
+ 	## -----------
+ 	
+ 	/**
+    * Get a list of proc instances.
+    *
+    * @param string $querystr Querystring to be used when calling GET proc.
+    * @return stdClass Corresponds to RATS proc feed
+    */
+ 	function getProcList($querystr = null)
+	{
+	  $uri = "/proc/";
+    return $this->json_client->GET($uri, $querystr);
+	}
+	
+	/**
+   * Get a single proc instance.
+   *
+   * @param string $id ID that uniquely identifies the proc instance.
+   * @return stdClass Object corresponding to a proc entry.
+   * @see https://wiki.rambla.be/RATS_proc_resource
+   */
+	function getProcInstance($id)
+	{
+	  $uri = "/proc/" . $id;
+    return $this->json_client->GET($uri);
+	}
+  
+	/**
+   * Create a new proc instance.
+   *
+   * Throws a RawsRequestException if the instance could not be created.
+   *
+   * @param array $a_params Associative array of proc params.
+   * @return stdClass Object corresponding to a proc entry.
+   * @see https://wiki.rambla.be/RATS_proc_resource
+   */
+	function createProc($a_params)
+	{
+	  $e = array();
+    $e["entry"] = array();
+    $e["entry"]["content"] = array();
+    $e["entry"]["content"]["params"] = $a_params;
+    return $this->json_client->POST("/proc/", $e);
+	}
+	
+	/**
+   * Update an existing proc instance.
+   *
+   * Throws a RawsRequestException if the instance could not be updated.
+   *
+   * @param stdClass $proc Corresponds to a RATS proc entry
+   * @return stdClass Corresponds to RATS proc entry
+   * @see https://wiki.rambla.be/RATS_proc_resource
+   */
+ 	function updateProc($proc)
+	{
+    return $this->json_client->POST($proc->entry->id, $proc);
+	}
+	
+	/**
+   * Delete proc instance.
+   *
+   * Throws a RawsRequestException if the instance could not be deleted.
+   *
+   * @param string $id ID that uniquely identifies the proc instance.
+   * @see https://wiki.rambla.be/RATS_proc_resource#DELETE
+   */
+	function deleteProc($id)
+	{
+	  $uri = "/proc/" . $id;
+    return $this->json_client->DELETE($uri);
+	}
+  
+ 	
+ 	
 	# SRCENCODE resource
 	# ----------------
 	
