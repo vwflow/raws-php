@@ -19,7 +19,7 @@
  * @see https://wiki.rambla.be/RASS_REST_API
  * @package	raws-php
  * @copyright rambla.eu, 2012
- * @version 0.1 (2012/04/26)
+ * @version 1.0 (2012/10/10)
  */
 
 require_once dirname(__FILE__) . '/json_service.php';

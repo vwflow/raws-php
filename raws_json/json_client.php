@@ -18,7 +18,7 @@
  *
  * @package	raws-php
  * @copyright rambla.eu, 2012
- * @version 0.1 (2012/04/26)
+ * @version 1.0 (2012/10/10)
  */
  
 /**
