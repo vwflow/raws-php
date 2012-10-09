@@ -25,6 +25,12 @@ require_once 'raws_json/rams_service.php';
 try {
   $rams = new RamsService(USER, PWD);
 
+  echo "\n\nGet users:";
+  $traffic = $rams->getUsersList();
+  foreach($traffic->feed->entry as $e) {
+    echo "\nUser = " . $e->content->params->name . " with email = " . $e->content->params->email; 
+  }
+
   echo "\n\nGet used list using querystring:";
   $traffic = $rams->getUsedList("from=2012-01;until=2012-12");
   foreach($traffic->feed->entry as $e) {
