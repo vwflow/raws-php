@@ -22,21 +22,16 @@
  * @version 0.1 (2012/04/26)
  */
 
-require_once dirname(__FILE__) . '/json_client.php';
+require_once dirname(__FILE__) . '/json_service.php';
 
 /**
  * Client for REST communication with the RASS service, using json as the data format.
  *
  * @see https://wiki.rambla.be/RASS_REST_API
  */
-class RassService
+class RassService extends JsonService
 {
-  var $username;
-  var $password;
-  var $server;
-  var $ssl;
-  var $json_client;
-	
+
   /**
    * Constructor.
    *
@@ -46,14 +41,10 @@ class RassService
    * @param bool $ssl Set to True if you're using SSL (default = False, if you want to use SSL for file uploads make sure you have a 'secure' user account - contact support@rambla.be)
    * @param string $user_agent Name of the user agent (is passed in the 'User-Agent' HTTP header).
    */
-	function __construct($username, $password, $server, $ssl = False, $user_agent = "raws-php") 
-	{
-    $this->username = $username;
-    $this->password = $password;
-    $this->server = $server;
-    $this->ssl = $ssl;
-    $this->json_client = new RawsJsonClient($username, $password, $this->server, $ssl, $user_agent);
-	}
+ 	function __construct($username, $password, $server = null, $ssl = False, $user_agent = "raws-php") 
+ 	{
+     parent::__construct($username, $password, $server, $ssl, $user_agent);
+ 	}
 	  
 	
   # Item Methods

@@ -21,21 +21,15 @@
  * @copyright rambla.eu, 2012
  * @version 0.1 (2012/04/26)
  */
-require_once dirname(__FILE__) . '/json_client.php';
+require_once dirname(__FILE__) . '/json_service.php';
 
 /**
  * Client for REST communication with the RATS service, using json as the data format.
  *
  * @see https://wiki.rambla.be/RATS_REST_API
  */
-class RamsService
+class RamsService extends JsonService
 {
-  var $username;
-  var $password;
-  var $server;
-  var $ssl;
-  var $json_client;
-	
   /**
    * Constructor.
    *
@@ -47,15 +41,13 @@ class RamsService
    */
 	function __construct($username, $password, $server = null, $ssl = False, $user_agent = "raws-php") 
 	{
-    $this->username = $username;
-    $this->password = $password;
     $this->server = "rams.mon01.rambla.be";
     if ($server) {
       $this->server = $server;
     }
-    $this->ssl = $ssl;
-    $this->json_client = new RawsJsonClient($username, $password, $this->server, $ssl, $user_agent);
+    parent::__construct($username, $password, $this->server, $ssl, $user_agent);
 	}
+
 
 	 /**
     * Get a list of traffic instances.
@@ -97,23 +89,36 @@ class RamsService
 	}
 	
 	 /**
-    * Get a list of concurrent (v2) instances.
+    * Get a list of concurrent (v1) instances.
     *
     * @param string $querystr Querystring to be used when calling GET concurrent.
     * @return stdClass Corresponds to RAMS concurrent feed
     */
- 	function getConcurrentList($app = null, $path = null, $querystr = null)
+ 	function getConcurrentV1List($querystr = null)
 	{
-	  $uri = "/concurrent/v2/";
-	  if ($app) {
-      $uri .= trim($app, "/") . "/";
-  		if ($path) {
-  			$uri .= trim($path, "/") . "/";
-			}
-    }
-    
+	  $uri = "/concurrent/v1/";
     return $this->json_client->GET($uri, $querystr);
 	}
+	
+	
+  //  /**
+  //     * Get a list of concurrent (v2) instances.
+  //     *
+  //     * @param string $querystr Querystring to be used when calling GET concurrent.
+  //     * @return stdClass Corresponds to RAMS concurrent feed
+  //     */
+  //    function getConcurrentList($app = null, $path = null, $querystr = null)
+  // {
+  //   $uri = "/concurrent/v2/";
+  //   if ($app) {
+  //       $uri .= trim($app, "/") . "/";
+  //      if ($path) {
+  //        $uri .= trim($path, "/") . "/";
+  //    }
+  //     }
+  //     
+  //     return $this->json_client->GET($uri, $querystr);
+  // }
 	
 	 /**
     * Get a list of (geo) domain instances.

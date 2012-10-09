@@ -21,7 +21,7 @@
  * @copyright rambla.eu, 2012
  * @version 0.1 (2012/04/26)
  */
-require_once dirname(__FILE__) . '/json_client.php';
+require_once dirname(__FILE__) . '/json_service.php';
 
 # default output profiles
 define('RATS_EXPORT_TO_CDN', "1");
@@ -75,13 +75,8 @@ define("RATS_EXPORT_FAILED", 10);
  *
  * @see https://wiki.rambla.be/RATS_REST_API
  */
-class RatsService
+class RatsService extends JsonService
 {
-  var $username;
-  var $password;
-  var $server;
-  var $ssl;
-  var $json_client;
 	
   /**
    * Constructor.
@@ -94,14 +89,11 @@ class RatsService
    */
 	function __construct($username, $password, $server = null, $ssl = False, $user_agent = "raws-php") 
 	{
-    $this->username = $username;
-    $this->password = $password;
     $this->server = "rats.enc01.rambla.be";
     if ($server) {
       $this->server = $server;
     }
-    $this->ssl = $ssl;
-    $this->json_client = new RawsJsonClient($username, $password, $this->server, $ssl, $user_agent);
+    parent::__construct($username, $password, $this->server, $ssl, $user_agent);
 	}
 
   # SRC resource
