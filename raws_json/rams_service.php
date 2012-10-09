@@ -24,9 +24,9 @@
 require_once dirname(__FILE__) . '/json_service.php';
 
 /**
- * Client for REST communication with the RATS service, using json as the data format.
+ * Client for REST communication with the RASE service, using json as the data format.
  *
- * @see https://wiki.rambla.be/RATS_REST_API
+ * @see https://wiki.rambla.be/RASE_REST_API
  */
 class RamsService extends JsonService
 {
