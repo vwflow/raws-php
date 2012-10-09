@@ -23,21 +23,16 @@
  * @version 0.1 (2012/04/26)
  */
 
-require_once dirname(__FILE__) . '/json_client.php';
+require_once dirname(__FILE__) . '/json_service.php';
 
 /**
  * Client for REST communication with the META service, using json as the data format.
  *
  * @see https://wiki.rambla.be/META_REST_API
  */
-class WebcastService
+class WebcastService extends JsonService
 {
-  var $username;
-  var $password;
-  var $server;
-  var $ssl;
-  var $json_client;
-	
+
   /**
    * Constructor.
    *
@@ -49,14 +44,11 @@ class WebcastService
    */
 	function __construct($username, $password, $server = null, $ssl = False, $user_agent = "raws-php") 
 	{
-    $this->username = $username;
-    $this->password = $password;
     $this->server = "meta.meta01.rambla.be";
     if ($server) {
       $this->server = $server;
     }
-    $this->ssl = $ssl;
-    $this->json_client = new RawsJsonClient($username, $password, $this->server, $ssl, $user_agent);
+    parent::__construct($username, $password, $this->server, $ssl, $user_agent);
 	}
 	
 
