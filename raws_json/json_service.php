@@ -118,9 +118,14 @@ class JsonService
       return null; # TODO : should raise error
     }
     
+    # if the entry object is part of an outer object, unpack it 
+    if(isset($entry->entry)) {
+      $entry = $entry->entry;
+    }
+    
     # see if there's a next link in the feed -> if so, take its url
     $url = null;
-    foreach($entry->entry->link as $link) {
+    foreach($entry->link as $link) {
       if ($link->rel == "enclosure") {
         $url = $link->href;
         break;
