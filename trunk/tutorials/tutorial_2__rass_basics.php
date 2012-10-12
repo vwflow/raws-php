@@ -30,7 +30,7 @@ try {
   $rass = new RassService(USER, PWD, RASS_SERVER);
 
   # Creates a "tutorial2" directory below your root dir
-  $dir = $rass->createDir("tutorial2", True);
+  $dir = $rass->createDir("tutorial2");
   # Retrieve the entry's "path" param
   echo "Created directory with path: " . $dir->entry->content->params->path . "\n";
   # Note: the URL for accessing this new dir resource is available as the entry's id
