@@ -51,9 +51,9 @@ try {
   
   # Retrieve a list of the files inside our root-directory
   echo "\nGetting files located under the root-directory:\n";
-  $feed = $rass->getDirList("/", "kind=file");
+  $dir_feed = $rass->getDirList("/", "kind=file");
   # Walk through the list of entries (entry == file)
-  foreach($feed->feed->entry as $entry) {
+  foreach($dir_feed->feed->entry as $entry) {
     # Retrieve the entry element's "kind" and "path" attributes
     echo "\nFound " . $entry->content->params->kind . " entry with path = " . $entry->content->params->path . "\n";
     # Retrieve the value of some file properties
@@ -67,8 +67,8 @@ try {
   
   # Retrieve a list of the files inside the 'bucks' sub-directory
   echo "\nGetting files located under 'bucks' sub-directory:\n";
-  $feed = $rass->getDirList("/bucks", "kind=file");
-  foreach ($feed->feed->entry as $entry) {
+  $dir_feed = $rass->getDirList("/bucks", "kind=file");
+  foreach ($dir_feed->feed->entry as $entry) {
     echo "\nFound " . $entry->content->params->kind . " entry with path = " .$entry->content->params->path . "\n";
     echo "Filename: " . $entry->content->params->filename . "\n";
     echo "Filesize: " . $entry->content->params->size . "\n";
@@ -78,8 +78,8 @@ try {
 
   # Retrieve a list of sub-directories of our root directory
   echo "\nGetting sub-directories of the root-direcory:\n";
-  $feed = $rass->getDirList("/", "kind=dir");
-  foreach ($feed->feed->entry as $entry) {
+  $dir_feed = $rass->getDirList("/", "kind=dir");
+  foreach ($dir_feed->feed->entry as $entry) {
     echo "\nFound " . $entry->content->params->kind . " entry with path = " . $entry->content->params->path . "\n";
     echo "Dir name: " . $entry->content->params->name . "\n";
     echo "Dir size: " . $entry->content->params->size . "\n";
