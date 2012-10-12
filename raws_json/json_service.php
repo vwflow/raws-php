@@ -81,7 +81,7 @@ class JsonService
 
   
   /**
-   * Return the URL stored in the 'next' link element of the feed, and return the feed in the server response (or null).
+   * Return the URL stored in the 'next' link element of the feed.
    *
    * @param stdClass $list Object corresponding to a feed
    * @return string URL inside the 'next' link element of the feed, or null.
@@ -97,6 +97,31 @@ class JsonService
     $url = null;
     foreach($list->feed->link as $link) {
       if ($link->rel == "next") {
+        $url = $link->href;
+        break;
+      }
+    }
+    
+    return $url;
+  }
+
+  /**
+   * Return the URL stored in the 'enclosure' link element of an entry.
+   *
+   * @param stdClass $entry Object corresponding to an entry
+   * @return string URL inside the 'enclosure' link element of the feed, or null.
+   */
+  public function getEnclosureLink($entry)
+  {
+    # can't do anything without a feed
+    if (! $entry) {
+      return null; # TODO : should raise error
+    }
+    
+    # see if there's a next link in the feed -> if so, take its url
+    $url = null;
+    foreach($entry->entry->link as $link) {
+      if ($link->rel == "enclosure") {
         $url = $link->href;
         break;
       }
