@@ -37,25 +37,25 @@ try {
   echo "New dir resource can be accessed at the URL: " . $dir->entry->id  . "\n";
 
   # Uploads the local file as 'taste.mp4' to the "tutorial2" directory on the CDN
-  $item = $rass->createItem($dir->entry->content->params->path, "taste.mp4", LOCAL_FILE, True);
+  $item = $rass->createItem($dir->entry->content->params->path, "taste.mp4", LOCAL_FILE);
   # Retrieve the entry's "path" attribute
   echo "\nCreated file with path: " . $item->entry->content->params->path . "\n";
   # Retrieve the filename on the CDN
   echo "Filename: " . $item->entry->content->params->filename . "\n";
   # Get the location of the file on the CDN from the entry's 'enclosure' link
   echo "Public download location of the uploaded file: " . $rass->getEnclosureLink($item) . "\n";
-  # Note: the URL for accessing this new dir resource is available as the entry's id
+  # Note: the URL for accessing this new item resource is available as the entry's id
   echo "New dir resource can be accessed at the URL: " . $item->entry->id  . "\n";
 
   # PUT the same file for a second time => RASS will add a numerical suffix
-  $item = $rass->createItem($dir->entry->content->params->path, "taste.mp4", LOCAL_FILE, True);
+  $item = $rass->createItem($dir->entry->content->params->path, "taste.mp4", LOCAL_FILE);
   # Retrieve the entry's "path" attribute
   echo "\nCreated file with path: " . $item->entry->content->params->path . "\n";
   # Retrieve the filename on the CDN
   echo "Filename: " . $item->entry->content->params->filename . "\n";
   # Get the location of the file on the CDN from the entry's 'enclosure' link
   echo "Public download location of the uploaded file: " . $rass->getEnclosureLink($item) . "\n";
-  # Note: the URL for accessing this new dir resource is available as the entry's id
+  # Note: the URL for accessing this new item resource is available as the entry's id
   echo "New dir resource can be accessed at the URL: " . $item->entry->id  . "\n";
   
   # DELETE file on the CDN
