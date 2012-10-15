@@ -68,7 +68,7 @@ try {
       echo "\nTraffic for type = " . $e->content->params->type ." and datetime = " . $e->content->params->datetime; 
       echo " - number of concurrent viewers = " . $e->content->params->hits; 
     }
-    $list = $rams->getNextFeed($list);
+    $list = $rams->getNextList($list);
   }
 
   echo "\n\nGet storage list for the current year:";

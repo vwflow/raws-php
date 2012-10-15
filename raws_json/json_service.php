@@ -57,7 +57,7 @@ class JsonService
    * @param stdClass $list Object corresponding to a feed
    * @param stdClass Object corresponding to the next feed request. Returns null if no 'next' feed is available.
    */
-  public function getNextFeed($list)
+  public function getNextList($list)
   {
     # can't do anything without a feed
     if (! $list) {
@@ -106,6 +106,116 @@ class JsonService
   }
 
   /**
+   * Follow the URL stored in the 'last' link element of the feed, and return the feed in the server response (or null).
+   *
+   * @param stdClass $list Object corresponding to a feed
+   * @param stdClass Object corresponding to the last feed request. Returns null if no 'last' feed is available.
+   */
+  public function getLastList($list)
+  {
+    # can't do anything without a feed
+    if (! $list) {
+      return null; # TODO : should raise error
+    }
+    
+    # see if there's a last link in the feed -> if so, take its url
+    $url = null;
+    foreach($list->feed->link as $link) {
+      if ($link->rel == "last") {
+        $url = $link->href;
+      }
+    }
+    # No last link available -> EOF
+    if (! $url) {
+      return null;
+    }
+    
+    return $this->json_client->do_request($url, "GET");
+  }
+
+  
+  /**
+   * Return the URL stored in the 'last' link element of the feed.
+   *
+   * @param stdClass $list Object corresponding to a feed
+   * @return string URL inside the 'last' link element of the feed, or null.
+   */
+  public function getLastLink($list)
+  {
+    # can't do anything without a feed
+    if (! $list) {
+      return null; # TODO : should raise error
+    }
+    
+    # see if there's a last link in the feed -> if so, take its url
+    $url = null;
+    foreach($list->feed->link as $link) {
+      if ($link->rel == "last") {
+        $url = $link->href;
+        break;
+      }
+    }
+    
+    return $url;
+  }
+
+  /**
+   * Follow the URL stored in the 'first' link element of the feed, and return the feed in the server response (or null).
+   *
+   * @param stdClass $list Object corresponding to a feed
+   * @param stdClass Object corresponding to the first feed request. Returns null if no 'first' feed is available.
+   */
+  public function getFirstList($list)
+  {
+    # can't do anything without a feed
+    if (! $list) {
+      return null; # TODO : should raise error
+    }
+    
+    # see if there's a first link in the feed -> if so, take its url
+    $url = null;
+    foreach($list->feed->link as $link) {
+      if ($link->rel == "first") {
+        $url = $link->href;
+      }
+    }
+    # No first link available -> EOF
+    if (! $url) {
+      return null;
+    }
+    
+    return $this->json_client->do_request($url, "GET");
+  }
+
+  
+  /**
+   * Return the URL stored in the 'first' link element of the feed.
+   *
+   * @param stdClass $list Object corresponding to a feed
+   * @return string URL inside the 'first' link element of the feed, or null.
+   */
+  public function getFirstLink($list)
+  {
+    # can't do anything without a feed
+    if (! $list) {
+      return null; # TODO : should raise error
+    }
+    
+    # see if there's a first link in the feed -> if so, take its url
+    $url = null;
+    foreach($list->feed->link as $link) {
+      if ($link->rel == "first") {
+        $url = $link->href;
+        break;
+      }
+    }
+    
+    return $url;
+  }
+
+
+
+  /**
    * Return the URL stored in the 'enclosure' link element of an entry.
    *
    * @param stdClass $entry Object corresponding to an entry
@@ -123,7 +233,7 @@ class JsonService
       $entry = $entry->entry;
     }
     
-    # see if there's a next link in the feed -> if so, take its url
+    # see if there's a last link in the feed -> if so, take its url
     $url = null;
     foreach($entry->link as $link) {
       if ($link->rel == "enclosure") {

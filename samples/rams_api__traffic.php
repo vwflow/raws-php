@@ -47,7 +47,7 @@ try {
       echo "\nTraffic for type = " . $e->content->params->type . ", kind = " . $e->content->params->kind  . " and path = " . $e->content->params->path; 
       echo " - volume = " . $e->content->params->volume . " - hits = " . $e->content->params->hits  . " - last_request = " . $e->content->params->last_request; 
     }
-    $traffic = $rams->getNextFeed($traffic);
+    $traffic = $rams->getNextList($traffic);
   }
   
   echo "\n\nGet traffic list for the files inside the root directory, for the current month:";
