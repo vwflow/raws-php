@@ -1,7 +1,7 @@
 <?php
 # Sample script for RAWS tutorial 4: see http://rambla.eu/raws-tutorial-4-getting-collections-php-client for more info.
 #
-# Copyright (C) 2010 rambla.be
+# Copyright (C) 2012 rambla.eu
 
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -96,27 +96,7 @@ try {
   echo "Deleted dir: " . $dir->entry->content->params->path . "\n";
     
 }
-catch(Zend_Gdata_App_Exception $e) {
-    # Report the exception to the user
-    echo "\nCaught exception: " . get_class($e) . "\n";
-    echo "Message: " . $e->getMessage() . "\n";
-    # get the HTTP status code
-    echo "HTTP Status Code: " . $e->getResponse()->getStatus() . "\n";
-    echo "Response Body with exception details: " . $e->getResponse()->getBody() . "\n";
-    # get the raws:error elements
-    $rawsResponse = Raws::parseRawsResponse($e->getResponse());
-    echo "Raws Code: " . $rawsResponse->getCode() . "\n";
-    echo "Raws Message: " . $rawsResponse->getMsg() . "\n";
-    $reasons = $rawsResponse->getReasons();
-    foreach ($reasons as $reason) {
-      echo "Raws Reason: " . $reason . "\n";
-    }
-    $details = $rawsResponse->getDetails();
-    foreach ($details as $key => $value) {
-      echo "Raws Detail: " . $key . " -> " . $value . "\n";
-    }
-}
-catch (Zend_Exception $e) {
-    echo "Caught exception: " . get_class($e) . "\n";
-    echo "Message: " . $e->getMessage() . "\n";
+catch(Exception $e) {
+  echo "\nAn exception occurred with code = " . $e->getCode();
+  echo "\nError msg = " . $e->getMessage();
 }
