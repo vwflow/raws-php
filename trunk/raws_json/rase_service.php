@@ -49,17 +49,29 @@ class RaseService extends JsonService
 	}
 
 
-	 /**
-    * Get a list of wowza applications.
-    *
-    * @param string $querystr Querystring to be used when calling GET wowapp.
-    * @return stdClass Corresponds to RASE wowapp feed
-    */
+ /**
+  * Get a list of wowza applications.
+  *
+  * @param string $querystr Querystring to be used when calling GET wowapp.
+  * @return stdClass Corresponds to RASE wowapp feed
+  */
  	function getWowappList($querystr = null)
 	{
 	  $uri = "/wowapp/";
     return $this->json_client->GET($uri, $querystr);
 	}
 
+ /**
+  * Get a single wowza application.
+  *
+  * @param string $id ID that uniquely identifies the wowapp instance.
+  * @param string $querystr Querystring to be used when calling GET wowapp.
+  * @return stdClass Corresponds to RASE wowapp entry
+  */
+ 	function getWowappInstance($id, $querystr = null)
+	{
+	  $uri = "/wowapp/" . $id;
+    return $this->json_client->GET($uri, $querystr);
+	}
 
 }
