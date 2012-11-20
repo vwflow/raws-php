@@ -460,5 +460,23 @@ class WebcastService extends JsonService
     return $this->json_client->DELETE($uri);
   }
   
+  /**
+   * Add a single asset to the webcast.
+   *
+   * @param string $webcast_id ID of an existing webcast instance.
+   * @param string $content_name Name of a content instance that will be added as asset.
+   * @return stdClass $webcast Updated webcast instance.
+   */
+  function addAssetToWebcast($webcast_id, $content_name)
+  {
+	  $v = array();
+    $v["entry"] = array();
+    $v["entry"]["content"] = array();
+    $v["entry"]["content"]["params"]["asset"] = $content_name;
+    
+	  $uri = "/webcast/add_asset/" . $this->username . "/" . $webcast_id . "/";
+    return $this->json_client->POST($uri, $v);
+  }
+  
 
 }
