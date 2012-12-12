@@ -142,6 +142,24 @@ class RassService extends JsonService
     return $this->json_client->DELETE($uri);
   }
   
+  /**
+   * Move a file using RASS.
+   *
+   * @param string $old_path Relative path to the existing file on the CDN.
+   * @param string $new_path Relative path to the location of the new file on the CDN.
+   */
+  function moveItem($old_path, $new_path, $key)
+  {
+    $uri = "/move/" . $this->username . "/";
+    
+    $e = $this->json_client->get_empty_entry_array();
+    $e["entry"]["content"]["params"]["old_path"] = $old_path;
+    $e["entry"]["content"]["params"]["new_path"] = $new_path;
+    $e["entry"]["content"]["params"]["key"] = $key;
+    
+    return $this->json_client->POST($uri, $e);
+  }
+  
   
   # Dir Methods
   # -------------
