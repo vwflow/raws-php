@@ -153,6 +153,18 @@ class FileObj
   var $framerate = "";
   var $samplerate = "";
 
+  var $filename = "";
+  var $extension = "";
+  var $mimetype = "";
+  
+  var $download = "";
+  var $rtmp_streamer = "";
+  var $rtmp_location = "";
+  var $rtsp = "";
+  var $apple_http = "";
+  var $silverlight = "";
+  var $adobe_http = "";
+  
   /**
    * Constructor.
    *
@@ -164,7 +176,10 @@ class FileObj
    */
   function __construct($path = null, $media_type = null, $size = null, $duration = null, 
                       $container = null, $bitrate = null, $width = null, $height = null, 
-                      $frames = null, $framerate = null, $samplerate = null)
+                      $frames = null, $framerate = null, $samplerate = null, 
+                      $filename = null, $extension = null, $mimetype = null, 
+                      $download = null, $rtmp_streamer = null, $rtmp_location = null, $rtsp = null, 
+                      $apple_http = null, $silverlight = null, $adobe_http = null)
   {
 	  $this->clear();
 	  if ($path) { 
@@ -200,6 +215,36 @@ class FileObj
     if (! is_null($samplerate)) {
       $this->samplerate = $samplerate;
     }
+    if (! is_null($filename)) {
+      $this->filename = $filename;
+    }
+    if (! is_null($extension)) {
+      $this->extension = $extension;
+    }
+    if (! is_null($mimetype)) {
+      $this->mimetype = $mimetype;
+    }
+    if (! is_null($download)) {
+      $this->download = $download;
+    }
+    if (! is_null($rtmp_streamer)) {
+      $this->rtmp_streamer = $rtmp_streamer;
+    }
+    if (! is_null($rtmp_location)) {
+      $this->rtmp_location = $rtmp_location;
+    }
+    if (! is_null($rtsp)) {
+      $this->rtsp = $rtsp;
+    }
+    if (! is_null($apple_http)) {
+      $this->apple_http = $apple_http;
+    }
+    if (! is_null($silverlight)) {
+      $this->silverlight = $silverlight;
+    }
+    if (! is_null($adobe_http)) {
+      $this->adobe_http = $adobe_http;
+    }
   }
   
   /**
@@ -208,8 +253,6 @@ class FileObj
 	function clear()
   {
     $this->path = "";
-    $this->filename = "";
-    $this->extension = "";
     $this->media_type = "";
     $this->duration = "";
     $this->size = "";
@@ -220,6 +263,18 @@ class FileObj
     $this->frames = "";
     $this->framerate = "";
     $this->samplerate = "";
+
+    $this->filename = "";
+    $this->extension = "";
+    $this->mimetype = "";
+
+    $this->download = "";
+    $this->rtmp_streamer = "";
+    $this->rtmp_location = "";
+    $this->rtsp = "";
+    $this->apple_http = "";
+    $this->silverlight = "";
+    $this->adobe_http = "";
   }
   
   /**
@@ -249,6 +304,19 @@ class FileObj
     $d["frames"] = $this->frames;
     $d["framerate"] = $this->framerate;
     $d["samplerate"] = $this->samplerate;
+
+    $d["filename"] = $this->filename;
+    $d["extension"] = $this->extension;
+    $d["mimetype"] = $this->mimetype;
+
+    $d["download"] = $this->download;
+    $d["rtmp_streamer"] = $this->rtmp_streamer;
+    $d["rtmp_location"] = $this->rtmp_location;
+    $d["rtsp"] = $this->rtsp;
+    $d["apple_http"] = $this->apple_http;
+    $d["silverlight"] = $this->silverlight;
+    $d["adobe_http"] = $this->adobe_http;
+
     return $d;
   }
 }
@@ -734,7 +802,7 @@ class MetaContent
     }
     # set files
     foreach ($inner_entry->content->file as $f) {
-      array_push($this->file_objs, new FileObj($f->path, $f->media_type, $f->size, $f->duration, $f->container, $f->bitrate, $f->width, $f->height, $f->frames, $f->framerate, $f->samplerate));
+      array_push($this->file_objs, new FileObj($f->path, $f->media_type, $f->size, $f->duration, $f->container, $f->bitrate, $f->width, $f->height, $f->frames, $f->framerate, $f->samplerate, $f->filename, $f->extension, $f->mimetype, $f->download, $f->rtmp_streamer, $f->rtmp_location, $f->rtsp, $f->apple_http, $f->silverlight, $f->adobe_http));
     }
     # set chapters
     if (property_exists($inner_entry->content, "chapter")) {
