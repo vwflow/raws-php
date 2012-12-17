@@ -164,6 +164,7 @@ class FileObj
   var $apple_http = "";
   var $silverlight = "";
   var $adobe_http = "";
+  var $rtmp_adaptive = "";
   
   /**
    * Constructor.
@@ -179,7 +180,7 @@ class FileObj
                       $frames = null, $framerate = null, $samplerate = null, 
                       $filename = null, $extension = null, $mimetype = null, 
                       $download = null, $rtmp_streamer = null, $rtmp_location = null, $rtsp = null, 
-                      $apple_http = null, $silverlight = null, $adobe_http = null)
+                      $apple_http = null, $silverlight = null, $adobe_http = null, $rtmp_adaptive = null)
   {
 	  $this->clear();
 	  if ($path) { 
@@ -245,6 +246,9 @@ class FileObj
     if (! is_null($adobe_http)) {
       $this->adobe_http = $adobe_http;
     }
+    if (! is_null($rtmp_adaptive)) {
+      $this->rtmp_adaptive = $rtmp_adaptive;
+    }
   }
   
   /**
@@ -275,6 +279,7 @@ class FileObj
     $this->apple_http = "";
     $this->silverlight = "";
     $this->adobe_http = "";
+    $this->rtmp_adaptive = "";
   }
   
   /**
@@ -316,6 +321,7 @@ class FileObj
     $d["apple_http"] = $this->apple_http;
     $d["silverlight"] = $this->silverlight;
     $d["adobe_http"] = $this->adobe_http;
+    $d["rtmp_adaptive"] = $this->rtmp_adaptive;
 
     return $d;
   }
@@ -802,7 +808,7 @@ class MetaContent
     }
     # set files
     foreach ($inner_entry->content->file as $f) {
-      array_push($this->file_objs, new FileObj($f->path, $f->media_type, $f->size, $f->duration, $f->container, $f->bitrate, $f->width, $f->height, $f->frames, $f->framerate, $f->samplerate, $f->filename, $f->extension, $f->mimetype, $f->download, $f->rtmp_streamer, $f->rtmp_location, $f->rtsp, $f->apple_http, $f->silverlight, $f->adobe_http));
+      array_push($this->file_objs, new FileObj($f->path, $f->media_type, $f->size, $f->duration, $f->container, $f->bitrate, $f->width, $f->height, $f->frames, $f->framerate, $f->samplerate, $f->filename, $f->extension, $f->mimetype, $f->download, $f->rtmp_streamer, $f->rtmp_location, $f->rtsp, $f->apple_http, $f->silverlight, $f->adobe_http, $f->rtmp_adaptive));
     }
     # set chapters
     if (property_exists($inner_entry->content, "chapter")) {
