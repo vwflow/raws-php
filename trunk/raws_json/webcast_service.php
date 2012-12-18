@@ -358,9 +358,6 @@ class WebcastService extends JsonService
   # Wslide methods
   # --------------
   
-  # Wslide Methods
-  # -------------
-
   /**
    * Create a new wslide instance.
    *
@@ -467,16 +464,48 @@ class WebcastService extends JsonService
    * @param string $content_name Name of a content instance that will be added as asset.
    * @return stdClass $webcast Updated webcast instance.
    */
-  function addAssetToWebcast($webcast_id, $content_name)
+  function addAssetToWebcast($webcast_id, $content_name, $type)
   {
 	  $v = array();
     $v["entry"] = array();
     $v["entry"]["content"] = array();
     $v["entry"]["content"]["params"]["asset"] = $content_name;
+    $v["entry"]["content"]["params"]["type"] = $type;
     
 	  $uri = "/webcast/add_asset/" . $this->username . "/" . $webcast_id . "/";
     return $this->json_client->POST($uri, $v);
   }
   
+  # wcuser methods
+  # --------------
+  
+  function updateWcuser($username, $live_hours_allowed, $concurrent_live_viewers_allowed, $concurrent_live_streams_allowed, $vod_webcasts_allowed, $vod_bandwidth_allowed, $resolutions_allowed)
+  {
+    $e = $this->json_client->get_empty_entry_array();
+    $e["entry"]["content"]["params"]["live_hours_allowed"] = $live_hours_allowed;
+    $e["entry"]["content"]["params"]["concurrent_live_viewers_allowed"] = $concurrent_live_viewers_allowed;
+    $e["entry"]["content"]["params"]["concurrent_live_streams_allowed"] = $concurrent_live_streams_allowed;
+    $e["entry"]["content"]["params"]["vod_webcasts_allowed"] = $vod_webcasts_allowed;
+    $e["entry"]["content"]["params"]["vod_bandwidth_allowed"] = $vod_bandwidth_allowed;
+    $e["entry"]["content"]["params"]["resolutions_allowed"] = $resolutions_allowed;
+
+    $uri = "/wcuser/" . $username . "/";
+    return $this->json_client->POST($uri, $e);
+  }
+ 
+  function getWcuser($username = null)
+  {
+    if (!$username) {
+      $username = $this->username;
+    }
+    $uri = "/wcuser/" . $username . "/";
+    return $this->json_client->GET($uri);
+  }
+  
+  function deleteWcuser($username)
+  {
+    $uri = "/wcuser/" . $username . "/";
+    return $this->json_client->DELETE($uri);
+  }
 
 }
