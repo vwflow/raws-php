@@ -508,4 +508,18 @@ class WebcastService extends JsonService
     return $this->json_client->DELETE($uri);
   }
 
+  function send_mail($from, $to, $subject, $text_content, $html_content)
+  {
+     $e = $this->json_client->get_empty_entry_array();
+     $e["entry"]["content"]["params"]["from"] = $from;
+     $e["entry"]["content"]["params"]["to"] = $to;
+     $e["entry"]["content"]["params"]["subject"] = $subject;
+     $e["entry"]["content"]["params"]["text_content"] = $text_content;
+     $e["entry"]["content"]["params"]["html_content"] = $html_content;
+
+     $uri = "/mail/" . $this->username . "/";
+     return $this->json_client->POST($uri, $e);
+     
+  }
+
 }
