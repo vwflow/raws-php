@@ -299,6 +299,21 @@ class RassService extends JsonService
       throw new RawsClientException("The getDirMetaInfo() response is not a list: the path argument (= $path) must point to a directory !");
     }
 	}
+	
+	
+  /**
+   * Search for a file or directory
+   *
+   * @param string $path Relative path to a directory on the CDN.
+   * @param string $querystr Querystring to be used when calling GET search.
+   * @return stdClass Corresponds to RASS search feed
+   */
+	function search($path, $querystr = null)
+	{
+    $uri = "search/" . ltrim($path, "/");
+    return $this->json_client->GET($uri, $querystr);
+	}
+  
   
   # file_upload methods
   # -------------------
