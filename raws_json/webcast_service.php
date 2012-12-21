@@ -72,7 +72,7 @@ class WebcastService extends JsonService
    * @return stdClass Object corresponding to the webcast instance that has been created.
    * @see https://wiki.rambla.be/META_webcast_resource#POST
    */
-	function createWebcast($status, $title = null, $description = null, $owner = null, $resolutions = null, $wchannels = null, $speaker = null, $agenda = null, $date = null)
+	function createWebcast($status, $title = null, $description = null, $owner = null, $resolutions = null, $wchannels = null, $speaker = null, $agenda = null, $date = null, $post_response = True)
 	{
 	  $v = array();
     $v["entry"] = array();
@@ -92,6 +92,10 @@ class WebcastService extends JsonService
     if($wchannels) {
       $v["entry"]["content"]["action"]["update_wchannel"] = "1";
       $v["entry"]["content"]["wchannel"] = $wchannels;
+    }
+    if (is_bool($post_response)) {
+      $v["entry"]["content"]["actions"] = array();
+      $v["entry"]["content"]["actions"]["post_response"] = (int)$post_response;
     }
     
 	  $uri = "/webcast/" . $this->username . "/";
@@ -134,9 +138,27 @@ class WebcastService extends JsonService
    * @return stdClass Object corresponding to the webcast instance that has been updated.
    * @see https://wiki.rambla.be/META_webcast_resource#POST
    */
-	function updateWebcast($webcast, $id = null)
+	function updateWebcast($webcast, $id = null, $post_response = True)
 	{
     $uri = null;
+    
+    # add post_response to the instance
+    if (is_bool($post_response)) 
+    {
+      if (is_array($webcast)) {
+        if (! array_key_exists('action', $entry["entry"]["content"])) {
+          $entry["entry"]["content"]["action"] = array();
+        }
+  	    $entry["entry"]["content"]["action"]["post_response"] = (int)$post_response;
+  	  }
+  	  elseif (is_object($webcast)) {
+  	    if (! isset($webcast->entry->content->action)) {
+  	      $webcast->entry->content->action = new stdClass;
+	      }
+	      $webcast->entry->content->action->post_response = (int)$post_response;
+  	  }
+	  }
+    
 	  if ($id) {
   	  $uri = "/webcast/" . $this->username . "/" . $id . "/";
 	  }
