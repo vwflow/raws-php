@@ -475,7 +475,7 @@ class WebcastService extends JsonService
    */
   function deleteWslide($id)
   {
-    $uri = "/wslide/" . $id . "/";
+    $uri = "/wslide/instance/" . $id . "/";
     return $this->json_client->DELETE($uri);
   }
   
