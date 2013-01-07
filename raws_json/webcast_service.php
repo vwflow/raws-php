@@ -450,7 +450,7 @@ class WebcastService extends JsonService
    * Deletes all Wslide instances linked to a given webcast.
    *
    * @param string $webcast_id Webcast identifier
-   * @param string $querystr Query-string to be added to request
+   * @param string $delete_from_cdn Also delete the file from the CDN.
    * @return stdClass Object corresponding to a wslide feed.
    * @see https://wiki.rambla.be/META_wslide_resource#GET
    */
