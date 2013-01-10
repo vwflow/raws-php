@@ -72,7 +72,7 @@ class WebcastService extends JsonService
    * @return stdClass Object corresponding to the webcast instance that has been created.
    * @see https://wiki.rambla.be/META_webcast_resource#POST
    */
-	function createWebcast($status, $title = null, $description = null, $owner = null, $resolutions = null, $wchannels = null, $speaker = null, $agenda = null, $date = null, $post_response = True)
+	function createWebcast($status, $title = null, $description = null, $owner = null, $resolutions = null, $wchannels = null, $speaker = null, $agenda = null, $date = null, $post_response = True, $recording_type = null)
 	{
 	  $v = array();
     $v["entry"] = array();
@@ -97,6 +97,7 @@ class WebcastService extends JsonService
       $v["entry"]["content"]["actions"] = array();
       $v["entry"]["content"]["actions"]["post_response"] = (int)$post_response;
     }
+    if ($recording_type) { $v["entry"]["content"]["params"]["recording_type"] = $recording_type;}
     
 	  $uri = "/webcast/" . $this->username . "/";
     return $this->json_client->POST($uri, $v);
@@ -431,6 +432,7 @@ class WebcastService extends JsonService
     $uri = "/wslide/tmp/" . $this->username . "/" . $webcast_id . "/";
     return $this->json_client->POST($uri, $v);
   }
+  
   /**
    * Get a list of wslide objects.
    *
@@ -445,14 +447,28 @@ class WebcastService extends JsonService
     return $this->json_client->GET($uri, $querystr);
   }
 
+  /**
+   * Update an existing wslide instance.
+   *
+   * Throws a RawsRequestException if the instance could not be updated.
+   *
+   * @param stdClass $wslide Object corresponding to an existing wslide instance
+   * @return stdClass Object corresponding to the wslide instance that has been updated.
+   * @see https://wiki.rambla.be/META_wslide_resource
+   */
+	function updateWslide($wslide)
+	{
+    $uri = $wslide->entry->id;
+    return $this->json_client->POST($uri, $wslide);
+	}
+
 
   /**
    * Deletes all Wslide instances linked to a given webcast.
    *
    * @param string $webcast_id Webcast identifier
    * @param string $delete_from_cdn Also delete the file from the CDN.
-   * @return stdClass Object corresponding to a wslide feed.
-   * @see https://wiki.rambla.be/META_wslide_resource#GET
+   * @see https://wiki.rambla.be/META_wslide_resource
    */
   function deleteWslideList($webcast_id, $delete_from_cdn = True)
   {
@@ -471,12 +487,17 @@ class WebcastService extends JsonService
    * Throws a RawsRequestException if the instance could not be deleted.
    *
    * @param string $id Slide id.
-   * @see https://wiki.rambla.be/META_wslide_resource#DELETE
+   * @param string $delete_from_cdn Also delete the file from the CDN.
+   * @see https://wiki.rambla.be/META_wslide_resource
    */
-  function deleteWslide($id)
+  function deleteWslide($id, $delete_from_cdn = True)
   {
+    $querystr = "delete_from_cdn=1";
+    if (! $delete_from_cdn) {
+      $querystr = "delete_from_cdn=0";
+    }
     $uri = "/wslide/instance/" . $id . "/";
-    return $this->json_client->DELETE($uri);
+    return $this->json_client->DELETE($uri, $querystr);
   }
   
   /**
