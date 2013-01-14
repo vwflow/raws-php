@@ -448,6 +448,19 @@ class WebcastService extends JsonService
   }
 
   /**
+   * Get a single wslide instance.
+   *
+   * @param string $id Wslide identifier
+   * @return stdClass Object corresponding to a wslide entry.
+   * @see https://wiki.rambla.be/META_wslide_resource
+   */
+  function getWslide($id)
+  {
+    $uri = "/wslide/instance/" . $id . "/";
+    return $this->json_client->GET($uri);
+  }
+
+  /**
    * Update an existing wslide instance.
    *
    * Throws a RawsRequestException if the instance could not be updated.
