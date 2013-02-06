@@ -317,7 +317,58 @@ class MetaService extends JsonService
     return $this->json_client->GET($uri, $querystr, False);
 	}
   
-  
+  /**
+   * Create a new content instance.
+   *
+   * Throws a RawsRequestException if the instance could not be created.
+   *
+   * @param string $content_name Name of the content instance to which the comment should be attached (= required).
+   * @param string $xml_namespace URL of the (XML) namespace (e.g. http://purl.org/dc/elements/1.1/) (= required)
+   * @return stdClass Object corresponding to the vocab instance that has been created.
+   * @see https://wiki.rambla.be/META_comment_resource
+   */
+	function createComment($content_name, $offset, $title, $description, $author, $type, $published)
+	{
+	  $v = array();
+    $v["entry"] = array();
+    $v["entry"]["content"] = array();
+    $v["entry"]["content"]["params"] = array();
+    $v["entry"]["content"]["params"]["offset"] = $offset;
+    $v["entry"]["content"]["params"]["title"] = $title;
+    $v["entry"]["content"]["params"]["description"] = $description;
+    $v["entry"]["content"]["params"]["author"] = $author;
+    $v["entry"]["content"]["params"]["type"] = $type;
+    $v["entry"]["content"]["params"]["published"] = $published;
+    
+	  $uri = "/comments/" . $this->username . "/" . $content_name . "/";
+    return $this->json_client->POST($uri, $v);
+	}
+	
+  /**
+   * Get a list of comment instances.
+   *
+   * @param string $content_name Name of the content instance to which the comment should be attached (= required).
+   * @return stdClass Object corresponding to a comment feed.
+   * @see https://wiki.rambla.be/META_comment_resource
+   */
+	function getCommentList($content_name, $id_from = null, $id_to = null)
+	{
+    $uri = "/comments/"  . $this->username . "/" . $content_name . "/";
+    $qstr = "";
+    if ($id_from) {
+      $qstr .= "id_from=" . $id_from;
+    }
+    if ($id_to) {
+      if ($qstr) {
+        $qstr .= ";";
+      }
+      $qstr .= "id_to=" . $id_to;
+    }
+    return $this->json_client->GET($uri, $qstr);
+	}
+	
+	
+
   /**
    * Get a single comment instance.
    *
