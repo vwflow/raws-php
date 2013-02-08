@@ -327,7 +327,7 @@ class MetaService extends JsonService
    * @return stdClass Object corresponding to the vocab instance that has been created.
    * @see https://wiki.rambla.be/META_comment_resource
    */
-	function createComment($content_name, $offset, $title, $description, $author, $type, $published)
+	function createComment($webcast_id, $offset, $title, $description, $author, $type, $published)
 	{
 	  $v = array();
     $v["entry"] = array();
@@ -340,7 +340,7 @@ class MetaService extends JsonService
     $v["entry"]["content"]["params"]["type"] = $type;
     $v["entry"]["content"]["params"]["published"] = $published;
     
-	  $uri = "/comments/" . $this->username . "/" . $content_name . "/";
+	  $uri = "/comments/" . $this->username . "/" . $webcast_id . "/";
     return $this->json_client->POST($uri, $v);
 	}
 	
@@ -351,9 +351,9 @@ class MetaService extends JsonService
    * @return stdClass Object corresponding to a comment feed.
    * @see https://wiki.rambla.be/META_comment_resource
    */
-	function getCommentList($content_name, $id_from = null, $id_to = null)
+	function getCommentList($webcast_id, $id_from = null, $id_to = null)
 	{
-    $uri = "/comments/"  . $this->username . "/" . $content_name . "/";
+    $uri = "/comments/"  . $this->username . "/" . $webcast_id . "/";
     $qstr = "";
     if ($id_from) {
       $qstr .= "id_from=" . $id_from;
