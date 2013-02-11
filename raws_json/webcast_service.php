@@ -393,7 +393,7 @@ class WebcastService extends JsonService
    * @return stdClass Object corresponding to the wslide instance that has been created.
    * @see https://wiki.rambla.be/META_wslide_resource#POST
    */
-  function createWslide($webcast_id, $path, $timestamp, $offset)
+  function createWslide($webcast_id, $path, $timestamp, $offset, $width, $height)
   {
     $v = array();
     $v["entry"] = array();
@@ -403,6 +403,8 @@ class WebcastService extends JsonService
     $v["entry"]["content"]["params"]["path"] = $path;
     $v["entry"]["content"]["params"]["timestamp"] = $timestamp;
     $v["entry"]["content"]["params"]["offset"] = $offset;
+    $v["entry"]["content"]["params"]["width"] = $width;
+    $v["entry"]["content"]["params"]["height"] = $height;
 
     $uri = "/wslide/" . $this->username . "/" . $webcast_id . "/";
     return $this->json_client->POST($uri, $v);
@@ -420,7 +422,7 @@ class WebcastService extends JsonService
    * @return stdClass Object corresponding to the wslide instance that has been created.
    * @see https://wiki.rambla.be/META_wslide_resource#POST
    */
-  function createWslideTmp($webcast_id, $path)
+  function createWslideTmp($webcast_id, $path, $width, $height)
   {
     $v = array();
     $v["entry"] = array();
@@ -428,6 +430,8 @@ class WebcastService extends JsonService
     $v["entry"]["content"]["params"] = array();
     $v["entry"]["content"]["params"]["webcast_id"] = $webcast_id;
     $v["entry"]["content"]["params"]["path"] = $path;
+    $v["entry"]["content"]["params"]["width"] = $width;
+    $v["entry"]["content"]["params"]["height"] = $height;
 
     $uri = "/wslide/tmp/" . $this->username . "/" . $webcast_id . "/";
     return $this->json_client->POST($uri, $v);
