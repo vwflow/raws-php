@@ -539,7 +539,7 @@ class WebcastService extends JsonService
   # wcuser methods
   # --------------
   
-  function updateWcuser($username, $live_hours_allowed, $concurrent_live_viewers_allowed, $concurrent_live_streams_allowed, $vod_webcasts_allowed, $vod_bandwidth_allowed, $resolutions_allowed, $aspect_ratio)
+  function updateWcuser($username, $live_hours_allowed, $concurrent_live_viewers_allowed, $concurrent_live_streams_allowed, $vod_webcasts_allowed, $vod_bandwidth_allowed, $resolutions_allowed, $aspect_ratio = null)
   {
     $e = $this->json_client->get_empty_entry_array();
     $e["entry"]["content"]["params"]["live_hours_allowed"] = $live_hours_allowed;
