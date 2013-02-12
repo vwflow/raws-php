@@ -393,7 +393,7 @@ class WebcastService extends JsonService
    * @return stdClass Object corresponding to the wslide instance that has been created.
    * @see https://wiki.rambla.be/META_wslide_resource#POST
    */
-  function createWslide($webcast_id, $path, $timestamp, $offset, $width, $height)
+  function createWslide($webcast_id, $path, $timestamp, $offset, $width = null, $height = null)
   {
     $v = array();
     $v["entry"] = array();
