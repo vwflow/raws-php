@@ -72,7 +72,7 @@ class WebcastService extends JsonService
    * @return stdClass Object corresponding to the webcast instance that has been created.
    * @see https://wiki.rambla.be/META_webcast_resource#POST
    */
-	function createWebcast($status, $title = null, $description = null, $owner = null, $resolutions = null, $wchannels = null, $speaker = null, $agenda = null, $date = null, $post_response = True, $recording_type = null)
+	function createWebcast($status, $title = null, $description = null, $owner = null, $resolutions = null, $wchannels = null, $speaker = null, $agenda = null, $date = null, $post_response = True, $recording_type = null, $auto_publish = null)
 	{
 	  $v = array();
     $v["entry"] = array();
@@ -98,6 +98,7 @@ class WebcastService extends JsonService
       $v["entry"]["content"]["actions"]["post_response"] = (int)$post_response;
     }
     if ($recording_type) { $v["entry"]["content"]["params"]["recording_type"] = $recording_type;}
+    if ($auto_publish) { $v["entry"]["content"]["params"]["auto_publish"] = $auto_publish;}
     
 	  $uri = "/webcast/" . $this->username . "/";
     return $this->json_client->POST($uri, $v);
