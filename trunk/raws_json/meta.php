@@ -407,6 +407,8 @@ class Comment
   var $type = "";
   var $updated = "";
   var $published = "";
+  var $publish_time = "";
+  var $insert_time = "";
 	
   /**
    * Constructor.
@@ -416,7 +418,7 @@ class Comment
    * @param string $title Comment title
    * @param string $description Comment description
    */
-	function __construct($offset = null, $title = null, $description = null, $author = null, $type = null, $updated = null, $published = null, $id = null) 
+	function __construct($offset = null, $title = null, $description = null, $author = null, $type = null, $updated = null, $published = null, $id = null, $publish_time = null, $insert_time = null) 
 	{
 	  $this->clear();
 	  if (! is_null($offset)) { 
@@ -443,6 +445,12 @@ class Comment
     if (! is_null($id)) {
         $this->id = $id;
     }
+    if (! is_null($publish_time)) {
+        $this->publish_time = $publish_time;
+    }
+    if (! is_null($insert_time)) {
+        $this->insert_time = $insert_time;
+    }
 	}
 	
   /**
@@ -458,6 +466,8 @@ class Comment
     $this->type = "";
     $this->updated = "";
     $this->published = "";
+    $this->publish_time = "";
+    $this->insert_time = "";
   }
 
   /**
@@ -476,6 +486,8 @@ class Comment
     $d["type"] = $this->type;
     $d["updated"] = $this->updated;
     $d["published"] = $this->published;
+    $d["publish_time"] = $this->publish_time;
+    $d["insert_time"] = $this->insert_time;
     return $d;
   }
 }
@@ -827,7 +839,7 @@ class MetaContent
     # set comments
     if (property_exists($inner_entry->content, "comment")) {
       foreach ($inner_entry->content->comment as $ch) {
-        array_push($this->comments, new Comment($ch->offset, $ch->title, $ch->description, $ch->author, $ch->type, $ch->updated, $ch->published, $ch->id));
+        array_push($this->comments, new Comment($ch->offset, $ch->title, $ch->description, $ch->author, $ch->type, $ch->updated, $ch->published, $ch->id, $ch->publish_time, $ch->insert_time));
       }
     }
   }
