@@ -803,7 +803,15 @@ class MetaContent
     # set meta objs
     if (property_exists($inner_entry->content->params, "meta")) {
       foreach ($inner_entry->content->params->meta as $m) {
-        array_push($this->meta_objs, new MetaObj($m->meta_name, $m->vocab, $m->text, $m->lang, get_object_vars($m)));
+        $text = "";
+        if (property_exists($m, "text")) {
+          $text = $m->text;
+        }
+        $lang = "";
+        if (property_exists($m, "lang")) {
+          $lang = $m->lang;
+        }
+        array_push($this->meta_objs, new MetaObj($m->meta_name, $m->vocab, $text, $lang, get_object_vars($m)));
       }
     }
     # set files
