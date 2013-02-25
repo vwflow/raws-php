@@ -354,6 +354,9 @@ class MetaService extends JsonService
    */
   function updateComment($params)
   {
+    if (is_object($params)) {
+      $params = get_object_vars($params);
+    }
     if (! $params["id"]) {
       throw new Exception("updateComment() : params argument must contain the comment id");
     }

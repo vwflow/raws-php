@@ -72,7 +72,7 @@ class WebcastService extends JsonService
    * @return stdClass Object corresponding to the webcast instance that has been created.
    * @see https://wiki.rambla.be/META_webcast_resource#POST
    */
-	function createWebcast($status, $title = null, $description = null, $owner = null, $resolutions = null, $wchannels = null, $speaker = null, $agenda = null, $date = null, $post_response = True, $recording_type = null, $auto_publish = null)
+	function createWebcast($status, $title = null, $description = null, $owner = null, $resolutions = null, $wchannels = null, $speaker = null, $agenda = null, $date = null, $post_response = True, $recording_type = null, $auto_publish = null, $email_to = null)
 	{
 	  $v = array();
     $v["entry"] = array();
@@ -99,6 +99,9 @@ class WebcastService extends JsonService
     }
     if ($recording_type) { $v["entry"]["content"]["params"]["recording_type"] = $recording_type;}
     if ($auto_publish) { $v["entry"]["content"]["params"]["auto_publish"] = $auto_publish;}
+    if ($email_to) { 
+      $v["entry"]["content"]["params"]["email_to"] = $email_to;
+    }
     
 	  $uri = "/webcast/" . $this->username . "/";
     return $this->json_client->POST($uri, $v);
@@ -209,37 +212,6 @@ class WebcastService extends JsonService
     return $exists;
   }
   
-  /**
-   * Sets the record_start of the webcast.
-   *
-   * @param stdClass $webcast Existing webcast instance.
-   * @param int $timestamp UNIX timestamp to be set in the webcast's record_start param (if null, the current time is used).
-   * @return stdClass $webcast Updated webcast instance.
-   */
-  function webcastSetRecordStart($webcast, $timestamp = null) 
-  {
-    if (!$timestamp) {
-      $timestamp = time();
-    }
-    $webcast->entry->content->params->record_start = (string)$timestamp;
-    return $this->updateWebcast($webcast);
-  }
-
-  /**
-   * Sets the record_end of the webcast.
-   *
-   * @param stdClass $webcast Existing webcast instance.
-   * @param int $timestamp UNIX timestamp to be set in the webcast's record_end param (if null, the current time is used).
-   * @return stdClass $webcast Updated webcast instance.
-   */
-  function webcastSetRecordEnd($webcast, $timestamp = null) 
-  {
-    if (!$timestamp) {
-      $timestamp = time();
-    }
-    $webcast->entry->content->params->record_end = (string)$timestamp;
-    return $this->updateWebcast($webcast);
-  }
   
   function trimWebcast($id, $trim_timestamp, $trim_start_secs, $trim_end_secs, $path, $resolution) 
   {
@@ -546,18 +518,18 @@ class WebcastService extends JsonService
    * @return stdClass Object corresponding to a comment feed.
    * @see https://wiki.rambla.be/META_comment_resource
    */
-	function getCommentList($webcast_id, $id_from = null, $id_to = null)
+	function getCommentList($webcast_id, $time_from = null, $time_to = null)
 	{
     $uri = "/comments/"  . $this->username . "/" . $webcast_id . "/";
     $qstr = "";
-    if ($id_from) {
-      $qstr .= "id_from=" . $id_from;
+    if ($time_from) {
+      $qstr .= "time_from=" . $time_from;
     }
-    if ($id_to) {
+    if ($time_to) {
       if ($qstr) {
         $qstr .= ";";
       }
-      $qstr .= "id_to=" . $id_to;
+      $qstr .= "time_to=" . $time_to;
     }
     return $this->json_client->GET($uri, $qstr);
 	}
@@ -583,18 +555,23 @@ class WebcastService extends JsonService
    * @return stdClass Object corresponding to the vocab instance that has been created.
    * @see https://wiki.rambla.be/META_comment_resource
    */
-	function createComment($webcast_id, $offset, $title, $description, $author, $type, $published, $auth_key_id, $auth_key)
+	function createComment($webcast_id, $title, $description, $author, $type, $published, $auth_key_id = null, $auth_key = null, $publish_time = null, $insert_time = null)
 	{
 	  $v = array();
     $v["entry"] = array();
     $v["entry"]["content"] = array();
     $v["entry"]["content"]["params"] = array();
-    $v["entry"]["content"]["params"]["offset"] = $offset;
     $v["entry"]["content"]["params"]["title"] = $title;
     $v["entry"]["content"]["params"]["description"] = $description;
     $v["entry"]["content"]["params"]["author"] = $author;
     $v["entry"]["content"]["params"]["type"] = $type;
     $v["entry"]["content"]["params"]["published"] = $published;
+    if ($publish_time) {
+      $v["entry"]["content"]["params"]["publish_time"] = $publish_time;
+    }
+    if ($insert_time) {
+      $v["entry"]["content"]["params"]["insert_time"] = $insert_time;
+    }
 
     $v["entry"]["auth"] = array();
     $v["entry"]["auth"]["key_id"] = $auth_key_id;
@@ -651,7 +628,72 @@ class WebcastService extends JsonService
 
      $uri = "/mail/" . $this->username . "/";
      return $this->json_client->POST($uri, $e);
-     
   }
+
+  # utility functions
+  # -----------------
+  
+  /**
+   * Sets the record_start of the webcast.
+   *
+   * @param stdClass $webcast Existing webcast instance.
+   * @param int $timestamp UNIX timestamp to be set in the webcast's record_start param (if null, the current time is used).
+   * @return stdClass $webcast Updated webcast instance.
+   */
+  function webcastSetRecordStart($webcast, $timestamp = null) 
+  {
+    if (!$timestamp) {
+      $timestamp = time();
+    }
+    $webcast->entry->content->params->record_start = (string)$timestamp;
+    return $this->updateWebcast($webcast);
+  }
+
+  /**
+   * Sets the record_end of the webcast.
+   *
+   * @param stdClass $webcast Existing webcast instance.
+   * @param int $timestamp UNIX timestamp to be set in the webcast's record_end param (if null, the current time is used).
+   * @return stdClass $webcast Updated webcast instance.
+   */
+  function webcastSetRecordEnd($webcast, $timestamp = null) 
+  {
+    if (!$timestamp) {
+      $timestamp = time();
+    }
+    $webcast->entry->content->params->record_end = (string)$timestamp;
+    return $this->updateWebcast($webcast);
+  }
+  
+  /**
+   * Sends a request with the delete_recording action set.
+   *
+   * @param stdClass $webcast Existing webcast instance.
+   * @return stdClass $webcast Updated webcast instance.
+   */
+  function webcastDeleteRecording($webcast) 
+  {
+    $webcast->entry->content->action = new stdClass;
+    $webcast->entry->content->action->delete_recording = True;
+    return $this->updateWebcast($webcast);
+  }
+  
+  
+  /**
+   * Get the name of the content instance linked to this webcast
+   *
+   * @return string Containing the name of the content instance linked to this webcast.
+   */
+  function getWebcastContentName($webcast)
+  {
+    $content_name = null;
+    foreach($webcast->entry->content->content as $c) {
+      $content_name = $c->name;
+    } 
+    return $content_name;
+  }
+  
+  
+
 
 }
