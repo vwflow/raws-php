@@ -518,18 +518,48 @@ class WebcastService extends JsonService
    * @return stdClass Object corresponding to a comment feed.
    * @see https://wiki.rambla.be/META_comment_resource
    */
-	function getCommentList($webcast_id, $time_from = null, $time_to = null)
+	function getCommentList($webcast_id, $time_from = null, $time_to = null, $published = null, $min_offset = null, $type = null, $notype = null, $order_by = null)
 	{
     $uri = "/comments/"  . $this->username . "/" . $webcast_id . "/";
     $qstr = "";
-    if ($time_from) {
+    if ($time_from !== null) {
       $qstr .= "time_from=" . $time_from;
     }
-    if ($time_to) {
+    if ($time_to !== null) {
       if ($qstr) {
         $qstr .= ";";
       }
       $qstr .= "time_to=" . $time_to;
+    }
+    if ($published !== null) {
+      if ($qstr) {
+        $qstr .= ";";
+      }
+      $qstr .= "published=" . $published;
+    }
+    if ($min_offset !== null) {
+      if ($qstr) {
+        $qstr .= ";";
+      }
+      $qstr .= "min_offset=" . $min_offset;
+    }
+    if ($type) {
+      if ($qstr) {
+        $qstr .= ";";
+      }
+      $qstr .= "type=" . $type;
+    }
+    if ($notype) {
+      if ($qstr) {
+        $qstr .= ";";
+      }
+      $qstr .= "notype=" . $notype;
+    }
+    if ($order_by) {
+      if ($qstr) {
+        $qstr .= ";";
+      }
+      $qstr .= "order_by=" . $order_by;
     }
     return $this->json_client->GET($uri, $qstr);
 	}
@@ -555,7 +585,7 @@ class WebcastService extends JsonService
    * @return stdClass Object corresponding to the vocab instance that has been created.
    * @see https://wiki.rambla.be/META_comment_resource
    */
-	function createComment($webcast_id, $title, $description, $author, $type, $published, $auth_key_id = null, $auth_key = null, $publish_time = null, $insert_time = null)
+	function createComment($webcast_id, $title, $description, $author, $type, $auth_key_id = null, $auth_key = null, $publish_time = null, $insert_time = null)
 	{
 	  $v = array();
     $v["entry"] = array();
@@ -565,7 +595,6 @@ class WebcastService extends JsonService
     $v["entry"]["content"]["params"]["description"] = $description;
     $v["entry"]["content"]["params"]["author"] = $author;
     $v["entry"]["content"]["params"]["type"] = $type;
-    $v["entry"]["content"]["params"]["published"] = $published;
     if ($publish_time) {
       $v["entry"]["content"]["params"]["publish_time"] = $publish_time;
     }
@@ -642,11 +671,12 @@ class WebcastService extends JsonService
    */
   function webcastSetRecordStart($webcast, $timestamp = null) 
   {
-    if (!$timestamp) {
-      $timestamp = time();
+    $uri = "/wc/record/start/" . $this->username . "/" . $webcast->entry->content->params->id . "/";
+    $querystr = "";
+    if ($timestamp) {
+      $querystr = "?timestamp=$timestamp";
     }
-    $webcast->entry->content->params->record_start = (string)$timestamp;
-    return $this->updateWebcast($webcast);
+    return $this->json_client->GET($uri, $querystr);
   }
 
   /**
@@ -658,11 +688,46 @@ class WebcastService extends JsonService
    */
   function webcastSetRecordEnd($webcast, $timestamp = null) 
   {
-    if (!$timestamp) {
-      $timestamp = time();
+    $uri = "/wc/record/end/" . $this->username . "/" . $webcast->entry->content->params->id . "/";
+    $querystr = "";
+    if ($timestamp) {
+      $querystr = "?timestamp=$timestamp";
     }
-    $webcast->entry->content->params->record_end = (string)$timestamp;
-    return $this->updateWebcast($webcast);
+    return $this->json_client->GET($uri, $querystr);
+  }
+
+  /**
+   * Sets the broadcast_start of the webcast.
+   *
+   * @param stdClass $webcast Existing webcast instance.
+   * @param int $timestamp UNIX timestamp to be set in the webcast's broadcast_start param (if null, the current time is used).
+   * @return stdClass $webcast Updated webcast instance.
+   */
+  function webcastSetBroadcastStart($webcast, $timestamp = null) 
+  {
+    $uri = "/wc/broadcast/start/" . $this->username . "/" . $webcast->entry->content->params->id . "/";
+    $querystr = "";
+    if ($timestamp) {
+      $querystr = "?timestamp=$timestamp";
+    }
+    return $this->json_client->GET($uri, $querystr);
+  }
+
+  /**
+   * Sets the broadcast_end of the webcast.
+   *
+   * @param stdClass $webcast Existing webcast instance.
+   * @param int $timestamp UNIX timestamp to be set in the webcast's broadcast_end param (if null, the current time is used).
+   * @return stdClass $webcast Updated webcast instance.
+   */
+  function webcastSetBroadcastEnd($webcast, $timestamp = null) 
+  {
+    $uri = "/wc/broadcast/end/" . $this->username . "/" . $webcast->entry->content->params->id . "/";
+    $querystr = "";
+    if ($timestamp) {
+      $querystr = "?timestamp=$timestamp";
+    }
+    return $this->json_client->GET($uri, $querystr);
   }
   
   /**
