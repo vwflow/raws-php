@@ -850,9 +850,9 @@ class WebcastService extends JsonService
    * @return stdClass Object corresponding to a registrant entry.
    * @see https://wiki.rambla.be/META_registrant_resource
    */
-  function getRegistrantById($id)
+  function getRegistrantById($registrant)
   {
-    $uri = "/registrant/" . $this->username . "/" . $webcast_id . "/" . $id . "/";
+    $uri = "/registrant/" . $this->username . "/" . $registrant->entry->content->params->webcast_id . "/" . $registrant->entry->content->params->id . "/";
     return $this->json_client->GET($uri);
   }
 
