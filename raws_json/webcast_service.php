@@ -781,15 +781,19 @@ class WebcastService extends JsonService
   # --------------
   
   /**
-   * Create a new registrant instance.
+   * Create or modify a registrant instance.
    *
    * Throws a RawsRequestException if the instance could not be created.
    *
    * @param string $webcast_id Webcast ID
+   * @param string $email Email address
+   * @param string $secret Registration code (should be set when creating the registrant)
+   * @param string $status Registration status (optional, default = 'ok')
+   * @param string $viewed Viewing status (optional, set to "0" or "1", default = "0")
    * @return stdClass Object corresponding to the registrant instance that has been created.
    * @see https://wiki.rambla.be/META_registrant_resource#POST
    */
-  function createRegistrant($webcast_id, $email, $secret, $status)
+  function updateRegistrant($webcast_id, $email, $secret, $status = null, $viewed = null)
   {
     $v = array();
     $v["entry"] = array();
@@ -799,14 +803,14 @@ class WebcastService extends JsonService
     $v["entry"]["content"]["params"]["email"] = $email;
     $v["entry"]["content"]["params"]["secret"] = $secret;
     $v["entry"]["content"]["params"]["status"] = $status;
+    $v["entry"]["content"]["params"]["viewed"] = $viewed;
 
     $uri = "/registrant/" . $this->username . "/" . $webcast_id . "/";
     return $this->json_client->POST($uri, $v);
   }
 
-
   /**
-   * Get a list of registrant objects.
+   * Get a list of all registrant entries for a given webcast.
    *
    * @param string $webcast_id Webcast identifier
    * @param string $querystr Query-string to be added to request
@@ -818,6 +822,26 @@ class WebcastService extends JsonService
     $uri = "/registrant/" . $this->username . "/" . $webcast_id . "/";
     return $this->json_client->GET($uri, $querystr);
   }
+  
+  /**
+   * Delete one or more registrants for a given webcast.
+   *
+   * If the $email argument is passed, only the registrant with the given email address is deleted.
+   * If $email = null, all registrant for the given webcast will be deleted. 
+   *
+   * @param string $webcast_id Webcast identifier
+   * @param string $email Email address of the registrant that should be deleted.
+   * @see https://wiki.rambla.be/META_registrant_resource#GET
+   */
+  function deleteRegistrants($webcast_id, $email = null)
+  {
+    $uri = "/registrant/" . $this->username . "/" . $webcast_id . "/";
+    $querystr = "";
+    if ($email) {
+      $querystr = "?email=" . $email;
+    }
+    return $this->json_client->DELETE($uri, $querystr);
+  }
 
   /**
    * Get a single registrant instance.
@@ -826,14 +850,14 @@ class WebcastService extends JsonService
    * @return stdClass Object corresponding to a registrant entry.
    * @see https://wiki.rambla.be/META_registrant_resource
    */
-  function getRegistrant($id)
+  function getRegistrantById($id)
   {
     $uri = "/registrant/" . $this->username . "/" . $webcast_id . "/" . $id . "/";
     return $this->json_client->GET($uri);
   }
 
   /**
-   * Update an existing registrant instance.
+   * Update an existing registrant instance (allows changing the email address of an existing registrant).
    *
    * Throws a RawsRequestException if the instance could not be updated.
    *
@@ -841,30 +865,11 @@ class WebcastService extends JsonService
    * @return stdClass Object corresponding to the registrant instance that has been updated.
    * @see https://wiki.rambla.be/META_registrant_resource
    */
-	function updateRegistrant($registrant)
+	function updateRegistrantById($registrant)
 	{
     $uri = "/registrant/" . $this->username . "/" . $registrant->entry->content->params->webcast_id . "/" . $registrant->entry->content->params->id . "/";
     return $this->json_client->POST($uri, $registrant);
 	}
-
-
-  // /**
-  //  * Deletes all Registrant instances linked to a given webcast.
-  //  *
-  //  * @param string $webcast_id Webcast identifier
-  //  * @param string $delete_from_cdn Also delete the file from the CDN.
-  //  * @see https://wiki.rambla.be/META_registrant_resource
-  //  */
-  // function deleteRegistrantList($webcast_id, $delete_from_cdn = True)
-  // {
-  //   $querystr = "delete_from_cdn=1";
-  //   if (! $delete_from_cdn) {
-  //     $querystr = "delete_from_cdn=0";
-  //   }
-  //   $uri = "/registrant/" . $this->username . "/" . $webcast_id . "/";
-  //   return $this->json_client->DELETE($uri, $querystr);
-  // }
-
 
   /**
    * Delete a registrant instance.
@@ -875,7 +880,7 @@ class WebcastService extends JsonService
    * @param string $delete_from_cdn Also delete the file from the CDN.
    * @see https://wiki.rambla.be/META_registrant_resource
    */
-  function deleteRegistrant($id, $delete_from_cdn = True)
+  function deleteRegistrantById($id)
   {
     $uri = "/registrant/" . $this->username . "/" . $registrant->entry->content->params->webcast_id . "/" . $registrant->entry->content->params->id . "/";
     return $this->json_client->DELETE($uri);
