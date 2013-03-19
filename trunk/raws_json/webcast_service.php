@@ -616,7 +616,7 @@ class WebcastService extends JsonService
   # wcuser methods
   # --------------
   
-  function updateWcuser($username, $live_hours_allowed, $concurrent_live_viewers_allowed, $concurrent_live_streams_allowed, $vod_webcasts_allowed, $vod_bandwidth_allowed, $resolutions_allowed, $aspect_ratio = null)
+  function updateWcuser($username, $live_hours_allowed, $concurrent_live_viewers_allowed, $concurrent_live_streams_allowed, $vod_webcasts_allowed, $vod_bandwidth_allowed, $resolutions_allowed, $aspect_ratio = null, $port = null)
   {
     $e = $this->json_client->get_empty_entry_array();
     $e["entry"]["content"]["params"]["live_hours_allowed"] = $live_hours_allowed;
@@ -626,6 +626,7 @@ class WebcastService extends JsonService
     $e["entry"]["content"]["params"]["vod_bandwidth_allowed"] = $vod_bandwidth_allowed;
     $e["entry"]["content"]["params"]["resolutions_allowed"] = $resolutions_allowed;
     $e["entry"]["content"]["params"]["aspect_ratio"] = $aspect_ratio;
+    $e["entry"]["content"]["params"]["port"] = $port;
 
     $uri = "/wcuser/" . $username . "/";
     return $this->json_client->POST($uri, $e);
@@ -731,6 +732,24 @@ class WebcastService extends JsonService
   }
   
   /**
+   * Sets the event_started of the webcast.
+   *
+   * @param stdClass $webcast Existing webcast instance.
+   * @param int $timestamp UNIX timestamp to be set in the webcast's event_started param (if null, the current time is used).
+   * @return stdClass $webcast Updated webcast instance.
+   */
+  function webcastSetEventStart($webcast, $timestamp = null) 
+  {
+    $uri = "/wc/event/start/" . $this->username . "/" . $webcast->entry->content->params->id . "/";
+    $querystr = "";
+    if ($timestamp) {
+      $querystr = "?timestamp=$timestamp";
+    }
+    return $this->json_client->GET($uri, $querystr);
+  }
+
+  
+  /**
    * Sends a request with the delete_recording action set.
    *
    * @param stdClass $webcast Existing webcast instance.
@@ -758,7 +777,126 @@ class WebcastService extends JsonService
     return $content_name;
   }
   
+  # Registrant methods
+  # --------------
   
+  /**
+   * Create a new registrant instance.
+   *
+   * Throws a RawsRequestException if the instance could not be created.
+   *
+   * @param string $webcast_id Webcast ID
+   * @return stdClass Object corresponding to the registrant instance that has been created.
+   * @see https://wiki.rambla.be/META_registrant_resource#POST
+   */
+  function createRegistrant($webcast_id, $email, $secret, $status)
+  {
+    $v = array();
+    $v["entry"] = array();
+    $v["entry"]["content"] = array();
+    $v["entry"]["content"]["params"] = array();
+    $v["entry"]["content"]["params"]["webcast_id"] = $webcast_id;
+    $v["entry"]["content"]["params"]["email"] = $email;
+    $v["entry"]["content"]["params"]["secret"] = $secret;
+    $v["entry"]["content"]["params"]["status"] = $status;
+
+    $uri = "/registrant/" . $this->username . "/" . $webcast_id . "/";
+    return $this->json_client->POST($uri, $v);
+  }
+
+
+  /**
+   * Get a list of registrant objects.
+   *
+   * @param string $webcast_id Webcast identifier
+   * @param string $querystr Query-string to be added to request
+   * @return stdClass Object corresponding to a registrant feed.
+   * @see https://wiki.rambla.be/META_registrant_resource#GET
+   */
+  function getRegistrantList($webcast_id, $querystr = null)
+  {
+    $uri = "/registrant/" . $this->username . "/" . $webcast_id . "/";
+    return $this->json_client->GET($uri, $querystr);
+  }
+
+  /**
+   * Get a single registrant instance.
+   *
+   * @param string $id Registrant identifier
+   * @return stdClass Object corresponding to a registrant entry.
+   * @see https://wiki.rambla.be/META_registrant_resource
+   */
+  function getRegistrant($id)
+  {
+    $uri = "/registrant/" . $this->username . "/" . $webcast_id . "/" . $id . "/";
+    return $this->json_client->GET($uri);
+  }
+
+  /**
+   * Update an existing registrant instance.
+   *
+   * Throws a RawsRequestException if the instance could not be updated.
+   *
+   * @param stdClass $registrant Object corresponding to an existing registrant instance
+   * @return stdClass Object corresponding to the registrant instance that has been updated.
+   * @see https://wiki.rambla.be/META_registrant_resource
+   */
+	function updateRegistrant($registrant)
+	{
+    $uri = "/registrant/" . $this->username . "/" . $registrant->entry->content->params->webcast_id . "/" . $registrant->entry->content->params->id . "/";
+    return $this->json_client->POST($uri, $registrant);
+	}
+
+
+  // /**
+  //  * Deletes all Registrant instances linked to a given webcast.
+  //  *
+  //  * @param string $webcast_id Webcast identifier
+  //  * @param string $delete_from_cdn Also delete the file from the CDN.
+  //  * @see https://wiki.rambla.be/META_registrant_resource
+  //  */
+  // function deleteRegistrantList($webcast_id, $delete_from_cdn = True)
+  // {
+  //   $querystr = "delete_from_cdn=1";
+  //   if (! $delete_from_cdn) {
+  //     $querystr = "delete_from_cdn=0";
+  //   }
+  //   $uri = "/registrant/" . $this->username . "/" . $webcast_id . "/";
+  //   return $this->json_client->DELETE($uri, $querystr);
+  // }
+
+
+  /**
+   * Delete a registrant instance.
+   *
+   * Throws a RawsRequestException if the instance could not be deleted.
+   *
+   * @param string $id Slide id.
+   * @param string $delete_from_cdn Also delete the file from the CDN.
+   * @see https://wiki.rambla.be/META_registrant_resource
+   */
+  function deleteRegistrant($id, $delete_from_cdn = True)
+  {
+    $uri = "/registrant/" . $this->username . "/" . $registrant->entry->content->params->webcast_id . "/" . $registrant->entry->content->params->id . "/";
+    return $this->json_client->DELETE($uri);
+  }
+
+
+  /**
+   * Check if a registrant has access.
+   *
+   * @param string $id Registrant identifier
+   * @return boolean
+   * @see https://wiki.rambla.be/META_registrant_resource
+   */
+  function hasAccess($webcast_id, $email, $secret)
+  {
+    $uri = "/wcaccess/" . $this->username . "/" . $webcast_id . "/";
+    $qstr = "?email=$email;secret=$secret";
+    return $this->json_client->GET($uri, $qstr);
+  }
+
+
 
 
 }
