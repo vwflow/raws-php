@@ -72,7 +72,7 @@ class WebcastService extends JsonService
    * @return stdClass Object corresponding to the webcast instance that has been created.
    * @see https://wiki.rambla.be/META_webcast_resource#POST
    */
-	function createWebcast($status, $title = null, $description = null, $owner = null, $resolutions = null, $wchannels = null, $speaker = null, $agenda = null, $date = null, $post_response = True, $recording_type = null, $auto_publish = null, $email_to = null)
+	function createWebcast($status, $title = null, $description = null, $owner = null, $resolutions = null, $wchannels = null, $speaker = null, $agenda = null, $date = null, $post_response = True, $recording_type = null, $auto_publish = null, $email_to = null, $registration_required = null)
 	{
 	  $v = array();
     $v["entry"] = array();
@@ -99,9 +99,8 @@ class WebcastService extends JsonService
     }
     if ($recording_type) { $v["entry"]["content"]["params"]["recording_type"] = $recording_type;}
     if ($auto_publish) { $v["entry"]["content"]["params"]["auto_publish"] = $auto_publish;}
-    if ($email_to) { 
-      $v["entry"]["content"]["params"]["email_to"] = $email_to;
-    }
+    if ($email_to) { $v["entry"]["content"]["params"]["email_to"] = $email_to;}
+    if ($registration_required) { $v["entry"]["content"]["params"]["registration_required"] = $registration_required;}
     
 	  $uri = "/webcast/" . $this->username . "/";
     return $this->json_client->POST($uri, $v);
@@ -891,10 +890,10 @@ class WebcastService extends JsonService
    * Check if a registrant has access.
    *
    * @param string $id Registrant identifier
-   * @return boolean
+   * @return stdClass Object corresponding to a webcast entry (or Excepion is raised if access was refused).
    * @see https://wiki.rambla.be/META_registrant_resource
    */
-  function hasAccess($webcast_id, $email, $secret)
+  function hasWebcastAccess($webcast_id, $email, $secret)
   {
     $uri = "/wcaccess/" . $this->username . "/" . $webcast_id . "/";
     $qstr = "?email=$email;secret=$secret";
