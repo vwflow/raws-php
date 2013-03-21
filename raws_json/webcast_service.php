@@ -879,7 +879,7 @@ class WebcastService extends JsonService
    * @param string $delete_from_cdn Also delete the file from the CDN.
    * @see https://wiki.rambla.be/META_registrant_resource
    */
-  function deleteRegistrantById($id)
+  function deleteRegistrantById($registrant)
   {
     $uri = "/registrant/" . $this->username . "/" . $registrant->entry->content->params->webcast_id . "/" . $registrant->entry->content->params->id . "/";
     return $this->json_client->DELETE($uri);
