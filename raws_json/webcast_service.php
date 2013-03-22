@@ -901,7 +901,7 @@ class WebcastService extends JsonService
   /**
    * Get a single event instance.
    *
-   * @param string $id ID that uniquely identifies the event instance.
+   * @param string $id ID that uniquely identifies the webcast/event instance.
    * @return stdClass Object corresponding to a event entry.
    * @see https://wiki.rambla.be/META_event_resource#GET
    */
@@ -926,6 +926,34 @@ class WebcastService extends JsonService
 	  $uri = "/wcevent/" . $this->username . "/" . $event->entry->content->params->id . "/";
     return $this->json_client->POST($uri, $event);
 	}
+
+  /**
+   * Update an existing event instance.
+   *
+   * Throws a RawsRequestException if the instance could not be updated.
+   *
+   * @param string $id ID that uniquely identifies the webcast/event instance.
+   * @return stdClass Object corresponding to a event entry.
+   * @see https://wiki.rambla.be/META_event_resource
+   */
+	function setWebcastEventProperties($id, $general_img, $waiting_img = null, $paused_img = null, $ended_img = null, $waiting_msg = null, $paused_msg = null, $ended_msg = null, $start_time = null, $end_time = null)
+	{
+    $v = array();
+    $v["entry"] = array();
+    $v["entry"]["content"] = array();
+    $v["entry"]["content"]["params"] = array();
+    if ($general_img) { $v["entry"]["content"]["params"]["general_img"] = $general_img;}
+    if ($waiting_img) { $v["entry"]["content"]["params"]["waiting_img"] = $waiting_img;}
+    if ($paused_img) { $v["entry"]["content"]["params"]["paused_img"] = $paused_img;}
+    if ($ended_img) { $v["entry"]["content"]["params"]["ended_img"] = $ended_img;}
+    if ($waiting_msg) { $v["entry"]["content"]["params"]["waiting_msg"] = $waiting_msg;}
+    if ($paused_msg) { $v["entry"]["content"]["params"]["paused_msg"] = $paused_msg;}
+    if ($ended_msg) { $v["entry"]["content"]["params"]["ended_msg"] = $ended_msg;}
+    if ($start_time) { $v["entry"]["content"]["params"]["start_time"] = $start_time;}
+    if ($end_time) { $v["entry"]["content"]["params"]["end_time"] = $end_time;}
+	  $uri = "/wcevent/" . $this->username . "/" . $id . "/";
+    return $this->json_client->POST($uri, $v);	
+  }
 
 
 
