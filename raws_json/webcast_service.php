@@ -72,7 +72,7 @@ class WebcastService extends JsonService
    * @return stdClass Object corresponding to the webcast instance that has been created.
    * @see https://wiki.rambla.be/META_webcast_resource#POST
    */
-	function createWebcast($status, $title = null, $description = null, $owner = null, $resolutions = null, $wchannels = null, $speaker = null, $agenda = null, $date = null, $post_response = True, $recording_type = null, $auto_publish = null, $email_to = null, $registration_required = null)
+	function createWebcast($status, $title = null, $description = null, $owner = null, $resolutions = null, $wchannels = null, $speaker = null, $agenda = null, $date = null, $post_response = True, $recording_type = null, $auto_publish = null, $email_to = null, $registration_required = null, $event_start_time = null)
 	{
 	  $v = array();
     $v["entry"] = array();
@@ -101,6 +101,7 @@ class WebcastService extends JsonService
     if ($auto_publish) { $v["entry"]["content"]["params"]["auto_publish"] = $auto_publish;}
     if ($email_to) { $v["entry"]["content"]["params"]["email_to"] = $email_to;}
     if ($registration_required) { $v["entry"]["content"]["params"]["registration_required"] = $registration_required;}
+    if ($event_start_time) { $v["entry"]["content"]["params"]["event_start_time"] = $event_start_time;}
     
 	  $uri = "/webcast/" . $this->username . "/";
     return $this->json_client->POST($uri, $v);
@@ -731,19 +732,16 @@ class WebcastService extends JsonService
   }
   
   /**
-   * Sets the event_started of the webcast.
+   * Sets the event status of the webcast.
    *
    * @param stdClass $webcast Existing webcast instance.
-   * @param int $timestamp UNIX timestamp to be set in the webcast's event_started param (if null, the current time is used).
+   * @param int $status_id (0 = waiting, 1 = started, 2 = paused, 3 = ended)
    * @return stdClass $webcast Updated webcast instance.
    */
-  function webcastSetEventStart($webcast, $timestamp = null) 
+  function webcastSetEventStatus($webcast, $status_id) 
   {
-    $uri = "/wc/event/start/" . $this->username . "/" . $webcast->entry->content->params->id . "/";
-    $querystr = "";
-    if ($timestamp) {
-      $querystr = "?timestamp=$timestamp";
-    }
+    $uri = "/wc/event/switch_status/" . $this->username . "/" . $webcast->entry->content->params->id . "/";
+    $querystr = "?new_status=$status_id";
     return $this->json_client->GET($uri, $querystr);
   }
 
@@ -900,6 +898,34 @@ class WebcastService extends JsonService
     return $this->json_client->GET($uri, $qstr);
   }
 
+  /**
+   * Get a single event instance.
+   *
+   * @param string $id ID that uniquely identifies the event instance.
+   * @return stdClass Object corresponding to a event entry.
+   * @see https://wiki.rambla.be/META_event_resource#GET
+   */
+	function getWcEventInstance($id)
+	{
+    $uri = "/wcevent/" . $this->username . "/" . $id . "/";
+    return $this->json_client->GET($uri);
+	}
+	
+	
+  /**
+   * Update an existing event instance.
+   *
+   * Throws a RawsRequestException if the instance could not be updated.
+   *
+   * @param stdClass $event Object corresponding to an existing event instance
+   * @return stdClass Object corresponding to the event instance that has been updated.
+   * @see https://wiki.rambla.be/META_event_resource#POST
+   */
+	function updateWcEvent($event)
+	{
+	  $uri = "/wcevent/" . $this->username . "/" . $event->entry->content->params->id . "/";
+    return $this->json_client->POST($uri, $event);
+	}
 
 
 
