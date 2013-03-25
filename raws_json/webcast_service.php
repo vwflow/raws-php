@@ -754,9 +754,12 @@ class WebcastService extends JsonService
    */
   function webcastDeleteRecording($webcast) 
   {
-    $webcast->entry->content->action = new stdClass;
-    $webcast->entry->content->action->delete_recording = True;
-    return $this->updateWebcast($webcast);
+    $uri = "/wc/record/delete/" . $this->username . "/" . $webcast->entry->content->params->id . "/";
+    return $this->json_client->GET($uri);
+    
+    // $webcast->entry->content->action = new stdClass;
+    // $webcast->entry->content->action->delete_recording = True;
+    // return $this->updateWebcast($webcast);
   }
   
   
