@@ -677,6 +677,14 @@ class WebcastService extends JsonService
     if ($timestamp) {
       $querystr = "?timestamp=$timestamp";
     }
+    if ($webcast->entry->content->params->recording_type) {
+      if ($querystr) {
+        $querystr = $querystr . ";recording_type=" . $webcast->entry->content->params->recording_type;
+      }
+      else {
+        $querystr = "?recording_type=" . $webcast->entry->content->params->recording_type;
+      }
+    }
     return $this->json_client->GET($uri, $querystr);
   }
 
