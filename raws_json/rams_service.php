@@ -101,24 +101,24 @@ class RamsService extends JsonService
 	}
 	
 	
-  //  /**
-  //     * Get a list of concurrent (v2) instances.
-  //     *
-  //     * @param string $querystr Querystring to be used when calling GET concurrent.
-  //     * @return stdClass Corresponds to RAMS concurrent feed
-  //     */
-  //    function getConcurrentList($app = null, $path = null, $querystr = null)
-  // {
-  //   $uri = "/concurrent/v2/";
-  //   if ($app) {
-  //       $uri .= trim($app, "/") . "/";
-  //      if ($path) {
-  //        $uri .= trim($path, "/") . "/";
-  //    }
-  //     }
-  //     
-  //     return $this->json_client->GET($uri, $querystr);
-  // }
+  /**
+  * Get a list of concurrent (v2) instances.
+  *
+  * @param string $querystr Querystring to be used when calling GET concurrent.
+  * @return stdClass Corresponds to RAMS concurrent feed
+  */
+  function getConcurrentV2List($app = null, $path = null, $querystr = null)
+  {
+    $uri = "/concurrent/v2/";
+    if ($app) 
+    {
+      $uri .= trim($app, "/") . "/";
+      if ($path) {
+        $uri .= trim($path, "/") . "/";
+      }
+    }
+    return $this->json_client->GET($uri, $querystr);
+  }
 	
 	 /**
     * Get a list of (geo) domain instances.
