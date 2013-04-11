@@ -533,7 +533,10 @@ class WebcastService extends JsonService
   function rmAssetsFromWebcast($webcast_id, $types)
   {
 	  $uri = "/webcast/rm_assets/" . $this->username . "/" . $webcast_id . "/";
-	  $querystr = $types;
+	  $querystr = "";
+	  if ($types) {
+  	  $querystr = "type=" . $types;
+	  }
     return $this->json_client->DELETE($uri, $querystr);
   }
   
