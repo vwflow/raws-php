@@ -509,6 +509,34 @@ class WebcastService extends JsonService
     return $this->json_client->POST($uri, $v);
   }
   
+  /**
+   * Remove a single asset from the webcast.
+   *
+   * @param string $webcast_id ID of the webcast instance to which the asset belongs.
+   * @param string $asset_name Content name of the asset to be removed.
+   * @return stdClass $webcast Updated webcast instance.
+   */
+  function rmAssetFromWebcast($webcast_id, $asset_name)
+  {
+	  $uri = "/webcast/rm_asset/" . $this->username . "/" . $webcast_id . "/"  . $asset_name . "/";
+    return $this->json_client->DELETE($uri);
+  }
+
+  /**
+   * Remove assets from the webcast.
+   *
+   * @param string $webcast_id ID of the webcast instance to which the asset belongs.
+   * @param string $types String containing single or multiple (comma-separated) asset types marked for deletion. 
+   *                      Leave empty to delete all assets from the webcast.
+   * @return stdClass $webcast Updated webcast instance.
+   */
+  function rmAssetsFromWebcast($webcast_id, $types)
+  {
+	  $uri = "/webcast/rm_assets/" . $this->username . "/" . $webcast_id . "/";
+	  $querystr = $types;
+    return $this->json_client->DELETE($uri, $querystr);
+  }
+  
   ## COMMENTS
   
   /**
@@ -966,6 +994,19 @@ class WebcastService extends JsonService
     return $this->json_client->POST($uri, $v);	
   }
 
+  /**
+   * Poll event instance.
+   *
+   * @param string $id ID that uniquely identifies the webcast/event instance.
+   * @return stdClass Object corresponding to a event poll entry.
+   * @see https://wiki.rambla.be/META_event_resource#GET
+   */
+	function pollEvent($id)
+	{
+    $uri = "/poll/wcevent/" . $this->username . "/" . $id . "/";
+    return $this->json_client->GET($uri);
+	}
+	
 
 
 }
