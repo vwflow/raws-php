@@ -642,7 +642,89 @@ class WebcastService extends JsonService
 	  $uri = "/comments/" . $this->username . "/" . $webcast_id . "/";
     return $this->json_client->POST($uri, $v);
 	}
+
+  /**
+   * Create a new comment instance.
+   *
+   * Throws a RawsRequestException if the instance could not be created.
+   *
+   * @param string $content_name Name of the content instance to which the comment should be attached (= required).
+   * @param string $xml_namespace URL of the (XML) namespace (e.g. http://purl.org/dc/elements/1.1/) (= required)
+   * @return stdClass Object corresponding to the vocab instance that has been created.
+   * @see https://wiki.rambla.be/META_comment_resource
+   */
+	function createAdminComment($webcast_id, $title, $description, $author, $type, $publish_time = null, $insert_time = null)
+	{
+	  $v = array();
+    $v["entry"] = array();
+    $v["entry"]["content"] = array();
+    $v["entry"]["content"]["params"] = array();
+    $v["entry"]["content"]["params"]["title"] = $title;
+    $v["entry"]["content"]["params"]["description"] = $description;
+    $v["entry"]["content"]["params"]["author"] = $author;
+    $v["entry"]["content"]["params"]["type"] = $type;
+    $v["entry"]["content"]["params"]["auto_publish"] = 1;
+    if ($publish_time) {
+      $v["entry"]["content"]["params"]["publish_time"] = $publish_time;
+    }
+    if ($insert_time) {
+      $v["entry"]["content"]["params"]["insert_time"] = $insert_time;
+    }
+     
+	  $uri = "/comments/" . $this->username . "/" . $webcast_id . "/";
+    return $this->json_client->POST($uri, $v);
+	}
 	  
+  /**
+   * Get a single comment instance.
+   *
+   * @param string $id ID that uniquely identifies the comment instance.
+   * @return stdClass Object corresponding to a comment entry.
+   * @see https://wiki.rambla.be/META_comment_resource#GET
+   */
+	function getCommentInstance($id)
+	{
+    $uri = "/comment/"  . $this->username . "/" . $id . "/";
+    return $this->json_client->GET($uri);
+	}
+	
+  /**
+   * Delete a comment instance.
+   *
+   * Throws a RawsRequestException if the instance could not be deleted.
+   *
+   * @param string $id Slide id.
+   * @see https://wiki.rambla.be/META_comment_resource#DELETE
+   */
+  function deleteComment($id)
+  {
+    $uri = "/comment/"  . $this->username . "/" . $id . "/";
+    return $this->json_client->DELETE($uri);
+  }
+  
+  /**
+   * Update an existing comment instance.
+   *
+   * @param array $params Params for this comment entry
+   * @return stdClass Object corresponding to the comment instance that has been created.
+   * @see https://wiki.rambla.be/META_comment_resource#POST
+   */
+  function updateComment($params)
+  {
+    if (is_object($params)) {
+      $params = get_object_vars($params);
+    }
+    if (! $params["id"]) {
+      throw new Exception("updateComment() : params argument must contain the comment id");
+    }
+    $v = array();
+    $v["entry"] = array();
+    $v["entry"]["content"] = array();
+    $v["entry"]["content"]["params"] = $params;
+    
+    $uri = "/comment/"  . $this->username . "/" . $params["id"] . "/";
+    return $this->json_client->POST($uri, $v);
+  }
   
   # wcuser methods
   # --------------
