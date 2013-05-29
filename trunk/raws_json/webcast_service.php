@@ -1092,6 +1092,20 @@ class WebcastService extends JsonService
     return $this->json_client->GET($uri);
 	}
 	
+  /**
+   * Replace the video(s) of an existing webcast
+   *
+   * Throws a RawsRequestException if the instance could not be created.
+   * Throws a RawsClientException if the entry argument is invalid.
+   *
+   * @param mixed $entry Associative array or stdClass object that can be json encoded into a valid content entry.
+   * @return stdClass Object corresponding to the webcast entry.
+   */
+	function replaceWebcastVideo($webcast_id, $content_entry)
+	{
+	  $uri = "/webcast/replace_video/" . $this->username . "/" . $webcast_id . "/";
+    return $this->json_client->POST($uri, $content_entry);
+	}
 
 
 }
