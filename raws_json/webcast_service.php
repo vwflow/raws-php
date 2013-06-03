@@ -1103,7 +1103,7 @@ class WebcastService extends JsonService
    */
 	function replaceWebcastVideo($webcast_id, $content_entry)
 	{
-	  $uri = "/webcast/replace_video/" . $this->username . "/" . $webcast_id . "/";
+	  $uri = "/webcast/video_replace/" . $this->username . "/" . $webcast_id . "/";
     return $this->json_client->POST($uri, $content_entry);
 	}
 
@@ -1117,7 +1117,7 @@ class WebcastService extends JsonService
 	function revertToOriginalVideo($webcast_id)
 	{
 	  $entry = "";
-	  $uri = "/webcast/revert_video/" . $this->username . "/" . $webcast_id . "/";
+	  $uri = "/webcast/video_revert/" . $this->username . "/" . $webcast_id . "/";
     return $this->json_client->POST($uri, $entry);
 	}
 
