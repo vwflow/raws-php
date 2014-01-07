@@ -616,7 +616,7 @@ class WebcastService extends JsonService
    * @return stdClass Object corresponding to the vocab instance that has been created.
    * @see https://wiki.rambla.be/META_comment_resource
    */
-	function createComment($webcast_id, $title, $description, $author, $type, $auth_key_id = null, $auth_key = null, $publish_time = null, $insert_time = null)
+	function createComment($webcast_id, $title, $description, $author, $type, $auth_key_id = null, $auth_key = null, $publish_time = null, $insert_time = null, $speaker_viewing = null)
 	{
 	  $v = array();
     $v["entry"] = array();
@@ -632,6 +632,7 @@ class WebcastService extends JsonService
     if ($insert_time) {
       $v["entry"]["content"]["params"]["insert_time"] = $insert_time;
     }
+    $v["entry"]["content"]["params"]["speaker_viewing"] = $speaker_viewing;
 
     $v["entry"]["auth"] = array();
     $v["entry"]["auth"]["key_id"] = $auth_key_id;
@@ -653,7 +654,7 @@ class WebcastService extends JsonService
    * @return stdClass Object corresponding to the vocab instance that has been created.
    * @see https://wiki.rambla.be/META_comment_resource
    */
-	function createAdminComment($webcast_id, $title, $description, $author, $type, $publish_time = null, $insert_time = null)
+	function createAdminComment($webcast_id, $title, $description, $author, $type, $publish_time = null, $insert_time = null, $speaker_viewing = null)
 	{
 	  $v = array();
     $v["entry"] = array();
@@ -670,6 +671,7 @@ class WebcastService extends JsonService
     if ($insert_time) {
       $v["entry"]["content"]["params"]["insert_time"] = $insert_time;
     }
+    $v["entry"]["content"]["params"]["speaker_viewing"] = $speaker_viewing;
      
 	  $uri = "/comments/" . $this->username . "/" . $webcast_id . "/";
     return $this->json_client->POST($uri, $v);

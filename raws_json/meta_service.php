@@ -320,6 +320,7 @@ class MetaService extends JsonService
 
   /**
    * Get a single comment instance.
+   * DEPRECATED: comments are now linked to webcasts, see webcast_service instead
    *
    * @param string $id ID that uniquely identifies the comment instance.
    * @return stdClass Object corresponding to a comment entry.
@@ -333,6 +334,7 @@ class MetaService extends JsonService
 	
   /**
    * Delete a comment instance.
+   * DEPRECATED: comments are now linked to webcasts, see webcast_service instead
    *
    * Throws a RawsRequestException if the instance could not be deleted.
    *
@@ -347,6 +349,7 @@ class MetaService extends JsonService
   
   /**
    * Update an existing comment instance.
+   * DEPRECATED: comments are now linked to webcasts, see webcast_service instead
    *
    * @param array $params Params for this comment entry
    * @return stdClass Object corresponding to the comment instance that has been created.
