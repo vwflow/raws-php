@@ -549,7 +549,7 @@ class WebcastService extends JsonService
    * @return stdClass Object corresponding to a comment feed.
    * @see https://wiki.rambla.be/META_comment_resource
    */
-	function getCommentList($webcast_id, $time_from = null, $time_to = null, $published = null, $min_offset = null, $type = null, $notype = null, $order_by = null)
+	function getCommentList($webcast_id, $time_from = null, $time_to = null, $published = null, $min_offset = null, $type = null, $notype = null, $order_by = null, $speaker_viewing = null)
 	{
     $uri = "/comments/"  . $this->username . "/" . $webcast_id . "/";
     $qstr = "";
@@ -592,6 +592,13 @@ class WebcastService extends JsonService
       }
       $qstr .= "order_by=" . $order_by;
     }
+    if ($speaker_viewing !== null) {
+      if ($qstr) {
+        $qstr .= ";";
+      }
+      $qstr .= "speaker_viewing=" . $speaker_viewing;
+    }
+    
     return $this->json_client->GET($uri, $qstr);
 	}
 
