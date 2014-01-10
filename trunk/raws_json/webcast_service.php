@@ -1130,5 +1130,24 @@ class WebcastService extends JsonService
     return $this->json_client->POST($uri, $entry);
 	}
 
+  /**
+   * Set the next poll
+   *
+   * Throws a RawsRequestException if the instance could not be created.
+   * Throws a RawsClientException if the entry argument is invalid.
+   *
+   */
+  function setNextPoll($owner, $webcast_id, $poll_id, $question, $expire, $choices) 
+  {
+    $a = array();
+    $a["owner"] = $owner;
+    $a["webcast_id"] = $webcast_id;
+    $a["poll_id"] = $poll_id;
+    $a["question"] = $question;
+    $a["expire"] = $expire;
+    $a["choices"] = $choices;
+    $uri = "/poll/next/" . $this->username . "/" . $webcast_id . "/";
+    return $this->json_client->POST($uri, $a);
+  }
 
 }
