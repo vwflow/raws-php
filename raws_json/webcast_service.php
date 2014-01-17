@@ -639,7 +639,9 @@ class WebcastService extends JsonService
     if ($insert_time) {
       $v["entry"]["content"]["params"]["insert_time"] = $insert_time;
     }
-    $v["entry"]["content"]["params"]["speaker_viewing"] = $speaker_viewing;
+    if ($speaker_viewing) {
+      $v["entry"]["content"]["params"]["speaker_viewing"] = $speaker_viewing;
+    }
 
     $v["entry"]["auth"] = array();
     $v["entry"]["auth"]["key_id"] = $auth_key_id;
@@ -678,7 +680,9 @@ class WebcastService extends JsonService
     if ($insert_time) {
       $v["entry"]["content"]["params"]["insert_time"] = $insert_time;
     }
-    $v["entry"]["content"]["params"]["speaker_viewing"] = $speaker_viewing;
+    if ($speaker_viewing) {
+      $v["entry"]["content"]["params"]["speaker_viewing"] = $speaker_viewing;
+    }
      
 	  $uri = "/comments/" . $this->username . "/" . $webcast_id . "/";
     return $this->json_client->POST($uri, $v);
