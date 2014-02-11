@@ -165,11 +165,13 @@ class FileObj
   var $silverlight = "";
   var $adobe_http = "";
   var $rtmp_adaptive = "";
+
+  var $language = "";
   
   /**
    * Constructor.
    *
-   * If you're creating a new Content object, it must contain at least one file object with the 'path' property being set.
+   * If you're creating a new File object, it must contain at least one file object with the 'path' property being set.
    * All other properties are optional.
    *
    * @param string $path relative path to the file on the CDN, starting from the root-directory of your user account
@@ -180,7 +182,7 @@ class FileObj
                       $frames = null, $framerate = null, $samplerate = null, 
                       $filename = null, $extension = null, $mimetype = null, 
                       $download = null, $rtmp_streamer = null, $rtmp_location = null, $rtsp = null, 
-                      $apple_http = null, $silverlight = null, $adobe_http = null, $rtmp_adaptive = null)
+                      $apple_http = null, $silverlight = null, $adobe_http = null, $rtmp_adaptive = null, $language = null)
   {
 	  $this->clear();
 	  if ($path) { 
@@ -249,6 +251,9 @@ class FileObj
     if (! is_null($rtmp_adaptive)) {
       $this->rtmp_adaptive = $rtmp_adaptive;
     }
+    if (! is_null($language)) {
+      $this->language = $language;
+    }
   }
   
   /**
@@ -280,6 +285,8 @@ class FileObj
     $this->silverlight = "";
     $this->adobe_http = "";
     $this->rtmp_adaptive = "";
+
+    $this->language = "";
   }
   
   /**
@@ -322,6 +329,8 @@ class FileObj
     $d["silverlight"] = $this->silverlight;
     $d["adobe_http"] = $this->adobe_http;
     $d["rtmp_adaptive"] = $this->rtmp_adaptive;
+
+    $d["language"] = $this->language;
 
     return $d;
   }
@@ -828,7 +837,7 @@ class MetaContent
     }
     # set files
     foreach ($inner_entry->content->file as $f) {
-      array_push($this->file_objs, new FileObj($f->path, $f->media_type, $f->size, $f->duration, $f->container, $f->bitrate, $f->width, $f->height, $f->frames, $f->framerate, $f->samplerate, $f->filename, $f->extension, $f->mimetype, $f->download, $f->rtmp_streamer, $f->rtmp_location, $f->rtsp, $f->apple_http, $f->silverlight, $f->adobe_http, $f->rtmp_adaptive));
+      array_push($this->file_objs, new FileObj($f->path, $f->media_type, $f->size, $f->duration, $f->container, $f->bitrate, $f->width, $f->height, $f->frames, $f->framerate, $f->samplerate, $f->filename, $f->extension, $f->mimetype, $f->download, $f->rtmp_streamer, $f->rtmp_location, $f->rtsp, $f->apple_http, $f->silverlight, $f->adobe_http, $f->rtmp_adaptive, $f->language));
     }
     # set chapters
     if (property_exists($inner_entry->content, "chapter")) {
