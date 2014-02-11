@@ -72,7 +72,7 @@ class WebcastService extends JsonService
    * @return stdClass Object corresponding to the webcast instance that has been created.
    * @see https://wiki.rambla.be/META_webcast_resource#POST
    */
-	function createWebcast($status, $title = null, $description = null, $owner = null, $resolutions = null, $wchannels = null, $speaker = null, $agenda = null, $date = null, $post_response = True, $recording_type = null, $auto_publish = null, $email_to = null, $registration_required = null, $event_start_time = null)
+	function createWebcast($status, $title = null, $description = null, $owner = null, $resolutions = null, $wchannels = null, $speaker = null, $agenda = null, $date = null, $post_response = True, $recording_type = null, $auto_publish = null, $email_to = null, $registration_required = null, $event_start_time = null, $languages = null)
 	{
 	  $v = array();
     $v["entry"] = array();
@@ -102,6 +102,7 @@ class WebcastService extends JsonService
     if ($email_to) { $v["entry"]["content"]["params"]["email_to"] = $email_to;}
     if ($registration_required) { $v["entry"]["content"]["params"]["registration_required"] = $registration_required;}
     if ($event_start_time) { $v["entry"]["content"]["params"]["event_start_time"] = $event_start_time;}
+    if ($languages) { $v["entry"]["content"]["params"]["languages"] = $languages;}
     
 	  $uri = "/webcast/" . $this->username . "/";
     return $this->json_client->POST($uri, $v);
@@ -213,7 +214,7 @@ class WebcastService extends JsonService
   }
   
   
-  function trimWebcast($id, $trim_timestamp, $trim_start_secs, $trim_end_secs, $path, $resolution) 
+  function trimWebcast($id, $trim_timestamp, $trim_start_secs, $trim_end_secs, $path, $resolution, $language) 
   {
     $a = array();
     $a["webcast_id"] = $id;
@@ -222,6 +223,7 @@ class WebcastService extends JsonService
     $a["trim_end_secs"] = $trim_end_secs;
     $a["path"] = $path;
     $a["resolution"] = $resolution;
+    $a["language"] = $language;
     $uri = "/webcast/trim/" . $this->username . "/" . $id . "/";
     return $this->json_client->POST($uri, $a);
   }
