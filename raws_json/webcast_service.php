@@ -1143,7 +1143,7 @@ class WebcastService extends JsonService
    * Throws a RawsClientException if the entry argument is invalid.
    *
    */
-  function setNextPoll($owner, $webcast_id, $poll_id, $question, $expire, $choices) 
+  function setNextPoll($owner, $webcast_id, $poll_id, $question, $expire, $choices, $raw_form = null) 
   {
     $a = array();
     $a["owner"] = $owner;
@@ -1152,6 +1152,7 @@ class WebcastService extends JsonService
     $a["question"] = $question;
     $a["expire"] = $expire;
     $a["choices"] = $choices;
+    $a["raw_form"] = $raw_form;
     $uri = "/poll/next/" . $this->username . "/" . $webcast_id . "/";
     return $this->json_client->POST($uri, $a);
   }
