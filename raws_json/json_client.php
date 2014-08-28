@@ -137,10 +137,10 @@ class RawsJsonClient
    * @param string $querystr Query-string to be appended to the URI.
    * @return stdClass Object corresponding to a json entry
    */
-	function POST($uri, $data, $querystr = null)
+	function POST($uri, $data, $querystr = null, $decode = True)
 	{
 	  $url = $this->get_url($uri, $querystr);
-	  return $this->do_request($url, "POST", $data);
+	  return $this->do_request($url, "POST", $data, null, $decode);
 	}
 
   // function POST_file($uri, $filepath, $extra_headers)
