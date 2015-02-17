@@ -689,6 +689,43 @@ class WebcastService extends JsonService
 	  $uri = "/comments/" . $this->username . "/" . $webcast_id . "/";
     return $this->json_client->POST($uri, $v);
 	}
+  
+  /**
+   * Add a new comment instance after the webcast status has changed to VOD.
+   *
+   * Throws a RawsRequestException if the instance could not be created.
+   *
+   * @param string $content_name Name of the content instance to which the comment should be attached (= required).
+   * @param string $xml_namespace URL of the (XML) namespace (e.g. http://purl.org/dc/elements/1.1/) (= required)
+   * @return stdClass Object corresponding to the vocab instance that has been created.
+   * @see https://wiki.rambla.be/META_comment_resource
+   */
+	function createVodComment($webcast_id, $title, $description, $author, $type, $offset)
+	{
+	  $v = array();
+    $v["entry"] = array();
+    $v["entry"]["content"] = array();
+    $v["entry"]["content"]["params"] = array();
+    $v["entry"]["content"]["params"]["title"] = $title;
+    $v["entry"]["content"]["params"]["description"] = $description;
+    $v["entry"]["content"]["params"]["author"] = $author;
+    $v["entry"]["content"]["params"]["type"] = $type;
+    $v["entry"]["content"]["params"]["offset"] = $offset;
+    $v["entry"]["content"]["params"]["auto_publish"] = 1;
+    // if ($publish_time) {
+    //   $v["entry"]["content"]["params"]["publish_time"] = $publish_time;
+    // }
+    // if ($insert_time) {
+    //   $v["entry"]["content"]["params"]["insert_time"] = $insert_time;
+    // }
+    // if ($speaker_viewing) {
+    //   $v["entry"]["content"]["params"]["speaker_viewing"] = $speaker_viewing;
+    // }
+     
+	  $uri = "/vodcomments/" . $this->username . "/" . $webcast_id . "/";
+    return $this->json_client->POST($uri, $v);
+	}
+  
 	  
   /**
    * Get a single comment instance.
