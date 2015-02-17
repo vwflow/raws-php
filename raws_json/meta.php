@@ -752,41 +752,43 @@ class MetaContent
   }
 
 
-  /**
-   * Get an array of Comment objects.
-   *
-   * @return array of Comment objects
-   */
-  function get_comments() {
-    return $this->comments;
-  }
-
-  /**
-   * Add a single Comment.
-   *
-   * @param Comment $comment
-   */
-  function add_comment($offset, $title = null, $description = null, $author = null, $type = null, $updated = null, $published = null) {
-    array_push($this->comments, new Comment($offset, $title, $description, $author, $type, $updated, $published));
-  }
-
-  /**
-   * Add an array of Comment objects.
-   *
-   * @param array $comments Array of Comment objects
-   */
-  function add_comments($comments) {
-    array_merge($this->comments, $comments);
-  }
-
-  /**
-   * Set all comments (replaces existing ones).
-   *
-   * @param array $comments Array of Comment objects
-   */
-  function set_comments($comments) {
-    $this->comments = $comments;
-  }
+  // COMMENTS ARE NOW DIRECTLY ATTACHED TO THE WEBCAST OBJECT, INSTEAD OF BEING PART OF THE CONTENT OBJ
+  // USE THE CONTENT METHODS IN CLASS WebcastService() INSTEAD
+  // /**
+  //  * Get an array of Comment objects.
+  //  *
+  //  * @return array of Comment objects
+  //  */
+  // function get_comments() {
+  //   return $this->comments;
+  // }
+  //
+  // /**
+  //  * Add a single Comment.
+  //  *
+  //  * @param Comment $comment
+  //  */
+  // function add_comment($offset, $title = null, $description = null, $author = null, $type = null, $updated = null, $published = null) {
+  //   array_push($this->comments, new Comment($offset, $title, $description, $author, $type, $updated, $published));
+  // }
+  //
+  // /**
+  //  * Add an array of Comment objects.
+  //  *
+  //  * @param array $comments Array of Comment objects
+  //  */
+  // function add_comments($comments) {
+  //   array_merge($this->comments, $comments);
+  // }
+  //
+  // /**
+  //  * Set all comments (replaces existing ones).
+  //  *
+  //  * @param array $comments Array of Comment objects
+  //  */
+  // function set_comments($comments) {
+  //   $this->comments = $comments;
+  // }
   
   
   /**
@@ -845,12 +847,12 @@ class MetaContent
         array_push($this->chapters, new Chapter($ch->offset, $ch->title, $ch->description, $ch->id));
       }
     }
-    # set comments
-    if (property_exists($inner_entry->content, "comment")) {
-      foreach ($inner_entry->content->comment as $ch) {
-        array_push($this->comments, new Comment($ch->offset, $ch->title, $ch->description, $ch->author, $ch->type, $ch->updated, $ch->published, $ch->id, $ch->publish_time, $ch->insert_time));
-      }
-    }
+    // # set comments
+    // if (property_exists($inner_entry->content, "comment")) {
+    //   foreach ($inner_entry->content->comment as $ch) {
+    //     array_push($this->comments, new Comment($ch->offset, $ch->title, $ch->description, $ch->author, $ch->type, $ch->updated, $ch->published, $ch->id, $ch->publish_time, $ch->insert_time));
+    //   }
+    // }
   }
 
   /**
@@ -888,9 +890,9 @@ class MetaContent
     }
     # set comments
     $entry["entry"]["content"]["comment"] = array();
-    foreach ($this->comments as $ch) {
-      array_push($entry["entry"]["content"]["comment"], $ch->to_array());
-    }
+    // foreach ($this->comments as $ch) {
+    //   array_push($entry["entry"]["content"]["comment"], $ch->to_array());
+    // }
 
     return $entry;
   }
