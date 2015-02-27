@@ -236,7 +236,7 @@ class WebcastService extends JsonService
     return $this->json_client->POST($uri, $a);
   }
   
-  function setWebcastMedia($id, $trim_timestamp, $trim_start_secs, $language, $a_files) 
+  function setWebcastMedia($id, $trim_timestamp, $trim_start_secs, $language, $trim_set_media_attempt, $a_files) 
   {
     $a = array();
     $a["webcast_id"] = $id;
@@ -244,6 +244,7 @@ class WebcastService extends JsonService
     $a["trim_start_secs"] = $trim_start_secs;
     $a["files"] = $a_files;
     $a["language"] = $language;
+    $a["trim_set_media_attempt"] = $trim_set_media_attempt;
     $uri = "/webcast/setmedia/" . $this->username . "/" . $id . "/";
     return $this->json_client->POST($uri, $a);
   }
