@@ -251,6 +251,7 @@ class RawsJsonClient
 
    curl_setopt($curl_handle, CURLOPT_USERPWD, $this->username . ":" . $this->password);
    curl_setopt($curl_handle, CURLOPT_USERAGENT, $this->user_agent);
+   curl_setopt($curl_handle, CURLOPT_HTTPHEADER, array('Expect:  '));
 
    switch ($method) {
      case 'GET':
